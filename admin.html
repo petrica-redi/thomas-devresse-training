@@ -244,7 +244,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     <div class="email-cfg"><h4>Cloudflare Email Routing</h4><p>Email → Email Routing → Routes: <code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p></div>
     <div class="email-cfg" style="margin-top:.6rem"><h4>Vercel Email</h4><p>Vercel Dashboard → Domain → devresse.fit → Email: <code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p></div>
   </div>
-  <div class="card"><div class="ch"><span class="ct">Stripe</span></div><p style="font-size:.78rem;color:var(--gl)">Status: <span class="badge b-yellow" id="stripeStatus">Demo Mode</span> — No real charges. Set <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">STRIPE_SECRET_KEY</code> in Vercel env vars to enable live payments.</p></div>
+  <div class="card"><div class="ch"><span class="ct">Stripe Payments</span></div><p style="font-size:.78rem;color:var(--gl)" id="stripeInfo">Status: <span class="badge b-gray" id="stripeStatus">Checking...</span></p></div>
+  <div class="card"><div class="ch"><span class="ct">Email Notifications</span></div><p style="font-size:.78rem;color:var(--gl)" id="emailInfo">Status: <span class="badge b-gray" id="emailStatus">Checking...</span></p></div>
 </div>
 
 </main>
@@ -270,7 +271,7 @@ document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
   n.classList.add('active');const p=n.dataset.page;
   document.getElementById(p+'Panel').classList.add('active');
-  const loaders={dashboard:loadDash,pages:loadPages,media:loadMedia,bookings:loadBookings,orders:loadOrders,subscribers:loadSubs,messages:loadMsgs,products:loadProd,services:loadSrv};
+  const loaders={dashboard:loadDash,pages:loadPages,media:loadMedia,bookings:loadBookings,orders:loadOrders,subscribers:loadSubs,messages:loadMsgs,products:loadProd,services:loadSrv,settings:loadStatus};
   if(loaders[p])loaders[p]();
 }));
 
@@ -483,6 +484,18 @@ document.getElementById('saveSrv').addEventListener('click',async()=>{
   const r=await api('/api/admin/services',{method:'PUT',body:JSON.stringify({services:a})});if(r.ok)toast('Services saved');else toast('Failed');
 });
 
+async function loadStatus(){
+  try{const r=await api('/api/admin/status');if(!r.ok)return;const s=await r.json();
+  const ss=document.getElementById('stripeStatus');const si=document.getElementById('stripeInfo');
+  if(s.stripeMode==='test'){ss.className='badge b-green';ss.textContent='Test Mode';si.innerHTML=`Status: ${ss.outerHTML} — Stripe test mode active. Use card <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">4242 4242 4242 4242</code> for test payments.${s.webhook?' Webhook: <span class="badge b-green">Active</span>':' Webhook: <span class="badge b-yellow">Not configured</span>'}`}
+  else if(s.stripeMode==='live'){ss.className='badge b-green';ss.textContent='Live';si.innerHTML=`Status: ${ss.outerHTML} — Live payments enabled.${s.webhook?' Webhook: <span class="badge b-green">Active</span>':''}`}
+  else{ss.className='badge b-yellow';ss.textContent='Demo Mode';si.innerHTML=`Status: ${ss.outerHTML} — No real charges. Set <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">STRIPE_SECRET_KEY</code> in Vercel env vars.`}
+  const es=document.getElementById('emailStatus');const ei=document.getElementById('emailInfo');
+  if(s.emailProvider==='resend'){es.className='badge b-green';es.textContent='Resend';ei.innerHTML=`Status: ${es.outerHTML} — Emails sent via Resend to <strong>${s.notifyEmail}</strong>`}
+  else if(s.emailProvider==='gmail'){es.className='badge b-green';es.textContent='Gmail SMTP';ei.innerHTML=`Status: ${es.outerHTML} — Emails sent via Gmail to <strong>${s.notifyEmail}</strong>`}
+  else{es.className='badge b-yellow';es.textContent='Not configured';ei.innerHTML=`Status: ${es.outerHTML} — Set <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">RESEND_API_KEY</code> or <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">GMAIL_APP_PASSWORD</code> + <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">GMAIL_USER</code> in Vercel env vars to enable email notifications to <strong>${s.notifyEmail}</strong>.`}
+  }catch(e){}
+}
 checkAuth();
 </script>
 </body>
