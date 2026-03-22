@@ -1,4 +1,4 @@
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 const { notifySubscriber } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
@@ -9,10 +9,9 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Valid email required' });
   }
 
-  const data = await loadSiteData();
-  if (!data.subscribers) data.subscribers = [];
+  const subscribers = await loadCollection('subscribers');
 
-  const exists = data.subscribers.some(s => s.email.toLowerCase() === email.toLowerCase());
+  const exists = subscribers.some(s => s.email.toLowerCase() === email.toLowerCase());
   if (exists) {
     return res.json({ ok: true, message: 'Already subscribed' });
   }
@@ -24,8 +23,8 @@ module.exports = async function handler(req, res) {
     source: 'website',
   };
 
-  data.subscribers.push(sub);
-  await saveSiteData(data);
+  subscribers.push(sub);
+  await saveCollection('subscribers', subscribers);
   notifySubscriber(sub).catch(() => {});
   res.json({ ok: true, message: 'Subscribed successfully' });
 };

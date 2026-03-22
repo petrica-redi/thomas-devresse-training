@@ -1,5 +1,5 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async (req, res) => {
   const user = await requireAuth(req, res);
@@ -7,8 +7,8 @@ module.exports = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const data = await loadSiteData();
-      res.status(200).json(data.media || []);
+      const media = await loadCollection('media');
+      res.status(200).json(media);
     } catch (e) {
       res.status(500).json({ error: 'Failed to load media' });
     }
@@ -16,15 +16,15 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'DELETE') {
-    const id = req.query.id;
+    const id = req.query?.id || new URL(req.url, 'http://x').searchParams.get('id');
     if (!id) {
       res.status(400).json({ error: 'Missing id' });
       return;
     }
     try {
-      const data = await loadSiteData();
-      data.media = (data.media || []).filter((m) => m.id !== id);
-      await saveSiteData(data);
+      const media = await loadCollection('media');
+      const filtered = media.filter((m) => m.id !== id);
+      await saveCollection('media', filtered);
       res.status(200).json({ removed: id });
     } catch (e) {
       res.status(500).json({ error: 'Failed to remove' });

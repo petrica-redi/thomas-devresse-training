@@ -1,5 +1,5 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async (req, res) => {
   const user = await requireAuth(req, res);
@@ -9,8 +9,8 @@ module.exports = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const data = await loadSiteData();
-      res.status(200).json(data.services || []);
+      const services = await loadCollection('services');
+      res.status(200).json(services);
     } catch (e) {
       res.status(500).json({ error: 'Failed to load services' });
     }
@@ -19,10 +19,9 @@ module.exports = async (req, res) => {
 
   if (req.method === 'PUT') {
     try {
-      const data = await loadSiteData();
-      data.services = Array.isArray(body.services) ? body.services : (data.services || []);
-      await saveSiteData(data);
-      res.status(200).json(data.services);
+      const services = Array.isArray(body.services) ? body.services : await loadCollection('services');
+      await saveCollection('services', services);
+      res.status(200).json(services);
     } catch (e) {
       res.status(500).json({ error: 'Failed to save services' });
     }

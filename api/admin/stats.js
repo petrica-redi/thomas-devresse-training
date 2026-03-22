@@ -1,5 +1,5 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData } = require('../lib/store');
+const { loadCollection } = require('../lib/store');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -7,13 +7,13 @@ module.exports = async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
-  const data = await loadSiteData();
-
-  const bookings = data.bookings || [];
-  const orders = data.orders || [];
-  const subscribers = data.subscribers || [];
-  const messages = data.messages || [];
-  const media = data.media || [];
+  const [bookings, orders, subscribers, messages, media] = await Promise.all([
+    loadCollection('bookings'),
+    loadCollection('orders'),
+    loadCollection('subscribers'),
+    loadCollection('messages'),
+    loadCollection('media'),
+  ]);
 
   const now = new Date();
   const thisMonth = now.getMonth();
@@ -38,7 +38,6 @@ module.exports = async function handler(req, res) {
     .reduce((sum, o) => sum + (o.total || 0), 0);
 
   const unreadMessages = messages.filter(m => !m.read).length;
-
   const pendingBookings = bookings.filter(b => b.status === 'pending' || b.status === 'confirmed').length;
 
   res.json({

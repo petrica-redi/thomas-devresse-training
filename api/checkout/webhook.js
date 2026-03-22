@@ -1,5 +1,5 @@
 const Stripe = require('stripe');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 const { notifyBooking, notifyOrder } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
@@ -30,11 +30,10 @@ module.exports = async function handler(req, res) {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const meta = session.metadata || {};
-        const data = await loadSiteData();
 
         if (meta.type === 'booking') {
-          if (!data.bookings) data.bookings = [];
-          data.bookings.unshift({
+          const bookings = await loadCollection('bookings');
+          const booking = {
             id: session.id,
             stripeSessionId: session.id,
             stripePaymentIntent: session.payment_intent,
@@ -49,13 +48,12 @@ module.exports = async function handler(req, res) {
             status: 'confirmed',
             paidAt: new Date().toISOString(),
             createdAt: new Date().toISOString(),
-          });
-          await saveSiteData(data);
-          notifyBooking(data.bookings[0]).catch(() => {});
+          };
+          bookings.unshift(booking);
+          await saveCollection('bookings', bookings);
+          notifyBooking(booking).catch(() => {});
           console.log('[Stripe] Booking saved:', session.id, meta.sessionType, meta.date, meta.time);
         } else {
-          if (!data.orders) data.orders = [];
-
           let items = [];
           try {
             const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 50 });
@@ -70,8 +68,8 @@ module.exports = async function handler(req, res) {
           }
 
           const shipping = session.shipping_details || session.shipping || null;
-
-          data.orders.unshift({
+          const orders = await loadCollection('orders');
+          const order = {
             id: session.id,
             stripeSessionId: session.id,
             stripePaymentIntent: session.payment_intent,
@@ -91,9 +89,10 @@ module.exports = async function handler(req, res) {
             } : null,
             paidAt: new Date().toISOString(),
             createdAt: new Date().toISOString(),
-          });
-          await saveSiteData(data);
-          notifyOrder(data.orders[0]).catch(() => {});
+          };
+          orders.unshift(order);
+          await saveCollection('orders', orders);
+          notifyOrder(order).catch(() => {});
           console.log('[Stripe] Order saved:', session.id, items.length, 'items, €' + (session.amount_total || 0) / 100);
         }
         break;
@@ -103,12 +102,11 @@ module.exports = async function handler(req, res) {
         const session = event.data.object;
         const meta = session.metadata || {};
         if (meta.type === 'booking') {
-          const data = await loadSiteData();
-          if (!data.bookings) data.bookings = [];
-          const idx = data.bookings.findIndex(b => b.stripeSessionId === session.id);
+          const bookings = await loadCollection('bookings');
+          const idx = bookings.findIndex(b => b.stripeSessionId === session.id);
           if (idx !== -1) {
-            data.bookings[idx].status = 'expired';
-            await saveSiteData(data);
+            bookings[idx].status = 'expired';
+            await saveCollection('bookings', bookings);
           }
         }
         console.log('[Stripe] Session expired:', session.id);
@@ -118,21 +116,22 @@ module.exports = async function handler(req, res) {
       case 'charge.refunded': {
         const charge = event.data.object;
         const pi = charge.payment_intent;
-        const data = await loadSiteData();
 
-        const order = (data.orders || []).find(o => o.stripePaymentIntent === pi);
+        const orders = await loadCollection('orders');
+        const order = orders.find(o => o.stripePaymentIntent === pi);
         if (order) {
           order.status = 'refunded';
           order.refundedAt = new Date().toISOString();
-          await saveSiteData(data);
+          await saveCollection('orders', orders);
           console.log('[Stripe] Order refunded:', order.id);
         }
 
-        const booking = (data.bookings || []).find(b => b.stripePaymentIntent === pi);
+        const bookings = await loadCollection('bookings');
+        const booking = bookings.find(b => b.stripePaymentIntent === pi);
         if (booking) {
           booking.status = 'refunded';
           booking.refundedAt = new Date().toISOString();
-          await saveSiteData(data);
+          await saveCollection('bookings', bookings);
           console.log('[Stripe] Booking refunded:', booking.id);
         }
         break;

@@ -1,5 +1,5 @@
 const Stripe = require('stripe');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 const { notifyBooking } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
@@ -15,10 +15,9 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const data = await loadSiteData();
-  if (!data.bookings) data.bookings = [];
+  const bookings = await loadCollection('bookings');
 
-  const conflict = data.bookings.find(
+  const conflict = bookings.find(
     b => b.date === date && b.time === time && b.status !== 'cancelled' && b.status !== 'expired' && b.status !== 'refunded'
   );
   if (conflict) {
@@ -29,22 +28,14 @@ module.exports = async function handler(req, res) {
 
   if (!priceNum || String(price).toLowerCase().includes('free')) {
     const bookingId = 'free_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    data.bookings.unshift({
-      id: bookingId,
-      name: name || '',
-      email,
-      phone: phone || '',
-      sessionType,
-      duration,
-      price: 0,
-      date,
-      time,
-      status: 'confirmed',
-      free: true,
-      createdAt: new Date().toISOString(),
-    });
-    await saveSiteData(data);
-    notifyBooking(data.bookings[0]).catch(() => {});
+    const booking = {
+      id: bookingId, name: name || '', email, phone: phone || '',
+      sessionType, duration, price: 0, date, time,
+      status: 'confirmed', free: true, createdAt: new Date().toISOString(),
+    };
+    bookings.unshift(booking);
+    await saveCollection('bookings', bookings);
+    notifyBooking(booking).catch(() => {});
     return res.status(200).json({ ok: true, free: true, id: bookingId });
   }
 
@@ -52,22 +43,14 @@ module.exports = async function handler(req, res) {
 
   if (!key) {
     const demoId = 'demo_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    data.bookings.unshift({
-      id: demoId,
-      name: name || '',
-      email,
-      phone: phone || '',
-      sessionType,
-      duration,
-      price: priceNum,
-      date,
-      time,
-      status: 'confirmed',
-      demo: true,
-      createdAt: new Date().toISOString(),
-    });
-    await saveSiteData(data);
-    notifyBooking(data.bookings[0]).catch(() => {});
+    const booking = {
+      id: demoId, name: name || '', email, phone: phone || '',
+      sessionType, duration, price: priceNum, date, time,
+      status: 'confirmed', demo: true, createdAt: new Date().toISOString(),
+    };
+    bookings.unshift(booking);
+    await saveCollection('bookings', bookings);
+    notifyBooking(booking).catch(() => {});
     const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
     return res.status(200).json({ url: `${origin}?booking=success&demo=true`, id: demoId, demo: true });
   }
@@ -97,13 +80,8 @@ module.exports = async function handler(req, res) {
       locale: 'auto',
       metadata: {
         type: 'booking',
-        sessionType,
-        duration,
-        date,
-        time,
-        clientName: name || '',
-        clientEmail: email,
-        clientPhone: phone || '',
+        sessionType, duration, date, time,
+        clientName: name || '', clientEmail: email, clientPhone: phone || '',
       },
     });
 

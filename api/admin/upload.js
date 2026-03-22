@@ -1,6 +1,6 @@
 const { requireAuth } = require('../lib/auth');
 const { put } = require('@vercel/blob');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -21,11 +21,11 @@ module.exports = async (req, res) => {
     const buf = Buffer.from(base64, 'base64');
     const pathname = `media/${Date.now()}-${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const blob = await put(pathname, buf, { access: 'public', contentType: body.mimeType || 'image/jpeg' });
-    const data = await loadSiteData();
-    data.media = data.media || [];
-    data.media.unshift({ id: Date.now().toString(), url: blob.url, filename, pathname, createdAt: new Date().toISOString() });
-    await saveSiteData(data);
-    res.status(200).json({ url: blob.url, id: data.media[0].id, filename });
+    const media = await loadCollection('media');
+    const entry = { id: Date.now().toString(), url: blob.url, filename, pathname, createdAt: new Date().toISOString() };
+    media.unshift(entry);
+    await saveCollection('media', media);
+    res.status(200).json({ url: blob.url, id: entry.id, filename });
   } catch (e) {
     console.error('upload', e);
     res.status(500).json({ error: 'Upload failed' });

@@ -1,27 +1,26 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
-  const data = await loadSiteData();
-  if (!data.orders) data.orders = [];
+  const orders = await loadCollection('orders');
 
   if (req.method === 'GET') {
-    return res.json(data.orders);
+    return res.json(orders);
   }
 
   if (req.method === 'PUT') {
     const { id, status, trackingNumber, notes } = req.body || {};
-    const idx = data.orders.findIndex(o => o.id === id);
+    const idx = orders.findIndex(o => o.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Order not found' });
-    if (status) data.orders[idx].status = status;
-    if (trackingNumber !== undefined) data.orders[idx].trackingNumber = trackingNumber;
-    if (notes !== undefined) data.orders[idx].notes = notes;
-    data.orders[idx].updatedAt = new Date().toISOString();
-    await saveSiteData(data);
-    return res.json(data.orders[idx]);
+    if (status) orders[idx].status = status;
+    if (trackingNumber !== undefined) orders[idx].trackingNumber = trackingNumber;
+    if (notes !== undefined) orders[idx].notes = notes;
+    orders[idx].updatedAt = new Date().toISOString();
+    await saveCollection('orders', orders);
+    return res.json(orders[idx]);
   }
 
   res.status(405).json({ error: 'Method not allowed' });

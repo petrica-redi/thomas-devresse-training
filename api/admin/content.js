@@ -1,5 +1,5 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async (req, res) => {
   const user = await requireAuth(req, res);
@@ -7,8 +7,8 @@ module.exports = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const data = await loadSiteData();
-      res.status(200).json(data.content || {});
+      const content = await loadCollection('content');
+      res.status(200).json(content);
     } catch (e) {
       res.status(500).json({ error: 'Failed to load content' });
     }
@@ -18,10 +18,10 @@ module.exports = async (req, res) => {
   if (req.method === 'PUT') {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     try {
-      const data = await loadSiteData();
-      data.content = { ...(data.content || {}), ...body };
-      await saveSiteData(data);
-      res.status(200).json(data.content);
+      const content = await loadCollection('content');
+      const merged = { ...content, ...body };
+      await saveCollection('content', merged);
+      res.status(200).json(merged);
     } catch (e) {
       res.status(500).json({ error: 'Failed to save content' });
     }

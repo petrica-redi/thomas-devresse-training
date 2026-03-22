@@ -1,5 +1,5 @@
 const Stripe = require('stripe');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 const { notifyOrder } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
@@ -18,10 +18,9 @@ module.exports = async function handler(req, res) {
   const shipping = subtotal >= 75 ? 0 : 4.95;
 
   if (!key) {
-    const data = await loadSiteData();
-    if (!data.orders) data.orders = [];
+    const orders = await loadCollection('orders');
     const demoId = 'demo_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    data.orders.unshift({
+    const order = {
       id: demoId,
       customerName: customerEmail || 'Demo Customer',
       email: customerEmail || '',
@@ -32,9 +31,10 @@ module.exports = async function handler(req, res) {
       demo: true,
       paidAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
-    });
-    await saveSiteData(data);
-    notifyOrder(data.orders[0]).catch(() => {});
+    };
+    orders.unshift(order);
+    await saveCollection('orders', orders);
+    notifyOrder(order).catch(() => {});
     const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
     return res.status(200).json({ url: `${origin}?checkout=success&demo=true`, id: demoId, demo: true });
   }

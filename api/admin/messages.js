@@ -1,31 +1,30 @@
 const { requireAuth } = require('../lib/auth');
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 
 module.exports = async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
-  const data = await loadSiteData();
-  if (!data.messages) data.messages = [];
+  const messages = await loadCollection('messages');
 
   if (req.method === 'GET') {
-    return res.json(data.messages);
+    return res.json(messages);
   }
 
   if (req.method === 'PUT') {
     const { id, read } = req.body || {};
-    const idx = data.messages.findIndex(m => m.id === id);
+    const idx = messages.findIndex(m => m.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Message not found' });
-    if (read !== undefined) data.messages[idx].read = read;
-    await saveSiteData(data);
-    return res.json(data.messages[idx]);
+    if (read !== undefined) messages[idx].read = read;
+    await saveCollection('messages', messages);
+    return res.json(messages[idx]);
   }
 
   if (req.method === 'DELETE') {
     const id = req.query?.id || new URL(req.url, 'http://x').searchParams.get('id');
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    data.messages = data.messages.filter(m => m.id !== id);
-    await saveSiteData(data);
+    const filtered = messages.filter(m => m.id !== id);
+    await saveCollection('messages', filtered);
     return res.json({ ok: true });
   }
 

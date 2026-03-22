@@ -1,4 +1,4 @@
-const { loadSiteData, saveSiteData } = require('../lib/store');
+const { loadCollection, saveCollection } = require('../lib/store');
 const { notifyContact } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
@@ -9,22 +9,18 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Name, email, and message are required' });
   }
 
-  const data = await loadSiteData();
-  if (!data.messages) data.messages = [];
+  const messages = await loadCollection('messages');
 
   const msg = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name,
-    email,
-    phone: phone || '',
+    name, email, phone: phone || '',
     subject: subject || 'Website Contact',
-    message,
-    read: false,
+    message, read: false,
     createdAt: new Date().toISOString(),
   };
 
-  data.messages.unshift(msg);
-  await saveSiteData(data);
+  messages.unshift(msg);
+  await saveCollection('messages', messages);
   notifyContact(msg).catch(() => {});
   res.json({ ok: true, message: 'Message sent successfully' });
 };

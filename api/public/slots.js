@@ -1,4 +1,4 @@
-const { loadSiteData } = require('../lib/store');
+const { loadCollection } = require('../lib/store');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,12 +14,12 @@ module.exports = async function handler(req, res) {
 
   const allSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 
-  const data = await loadSiteData();
-  const bookings = (data.bookings || []).filter(
+  const bookings = await loadCollection('bookings');
+  const dayBookings = bookings.filter(
     b => b.date === date && b.status !== 'cancelled' && b.status !== 'expired' && b.status !== 'refunded'
   );
 
-  const bookedTimes = new Set(bookings.map(b => b.time));
+  const bookedTimes = new Set(dayBookings.map(b => b.time));
   const available = allSlots.map(s => ({ time: s, available: !bookedTimes.has(s) }));
 
   res.json({ date, slots: available });
