@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
   if (!key) return res.status(500).json({ error: 'Stripe not configured' });
 
   const stripe = new Stripe(key);
-  const { items, mode, customerEmail } = req.body;
+  const { items, customerEmail } = req.body;
 
   if (!items || !items.length) return res.status(400).json({ error: 'No items provided' });
 
@@ -31,24 +31,55 @@ module.exports = async function handler(req, res) {
       quantity: item.quantity || 1,
     }));
 
+    const subtotal = items.reduce((s, i) => s + i.price * (i.quantity || 1), 0);
+    const hasPhysical = items.some(i => i.requiresShipping !== false);
+
+    const shippingOptions = hasPhysical ? [
+      ...(subtotal >= 75 ? [{
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: 0, currency: 'eur' },
+          display_name: 'Free Shipping (orders €75+)',
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 1 },
+            maximum: { unit: 'business_day', value: 3 },
+          },
+        },
+      }] : []),
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: 495, currency: 'eur' },
+          display_name: subtotal >= 75 ? 'Express Shipping' : 'Standard Shipping',
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 1 },
+            maximum: { unit: 'business_day', value: 3 },
+          },
+        },
+      },
+    ] : [];
+
     const sessionConfig = {
       payment_method_types: ['card', 'bancontact', 'ideal'],
       line_items: lineItems,
-      mode: mode || 'payment',
+      mode: 'payment',
       success_url: `${origin}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}?checkout=cancelled`,
       locale: 'auto',
+      metadata: {
+        type: 'order',
+        itemCount: String(items.length),
+        itemNames: items.map(i => i.name).join(', ').slice(0, 500),
+      },
       ...(customerEmail && { customer_email: customerEmail }),
     };
 
-    if (mode !== 'subscription') {
-      const hasPhysical = items.some(i => i.requiresShipping);
-      if (hasPhysical) {
-        sessionConfig.shipping_address_collection = { allowed_countries: ['BE', 'NL', 'FR', 'DE', 'LU'] };
-        sessionConfig.shipping_options = [
-          { shipping_rate_data: { type: 'fixed_amount', fixed_amount: { amount: 495, currency: 'eur' }, display_name: 'Standard Shipping', delivery_estimate: { minimum: { unit: 'business_day', value: 1 }, maximum: { unit: 'business_day', value: 3 } } } },
-          { shipping_rate_data: { type: 'fixed_amount', fixed_amount: { amount: 0, currency: 'eur' }, display_name: 'Free Shipping (€75+)', delivery_estimate: { minimum: { unit: 'business_day', value: 1 }, maximum: { unit: 'business_day', value: 3 } } } },
-        ];
+    if (hasPhysical) {
+      sessionConfig.shipping_address_collection = {
+        allowed_countries: ['BE', 'NL', 'FR', 'DE', 'LU', 'GB'],
+      };
+      if (shippingOptions.length) {
+        sessionConfig.shipping_options = shippingOptions;
       }
     }
 

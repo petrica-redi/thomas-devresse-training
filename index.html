@@ -862,6 +862,18 @@ section{padding:4rem 1.2rem}
 <div class="li" style="margin-top:1rem"><p><strong>Jims Meiser</strong><br>Chaussée de Louvain 650<br>1030 Schaerbeek</p></div>
 <div class="li"><div class="li-ico"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><p><strong>Email</strong></p><p><a href="mailto:contact@thomasdevresse.be">contact@thomasdevresse.be</a></p></div></div>
 <div class="li"><div class="li-ico"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div><div><p><strong>Instagram</strong></p><p><a href="https://instagram.com/thomasdevresse" target="_blank">@thomasdevresse ↗</a></p></div></div>
+<div class="cnt-form" id="cntForm" style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
+<h4 style="font-size:.85rem;font-weight:700;margin-bottom:.8rem;color:var(--white)">Send a Message</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem"><div class="fg"><input placeholder="Your name" id="cntName"></div><div class="fg"><input type="email" placeholder="Your email" id="cntEmail"></div></div>
+<div class="fg" style="margin-bottom:.6rem"><input placeholder="Subject (optional)" id="cntSubject"></div>
+<div class="fg" style="margin-bottom:.8rem"><textarea placeholder="Your message..." id="cntMsg" style="min-height:80px;width:100%;padding:.55rem .7rem;background:var(--black);border:1px solid rgba(255,255,255,.06);color:var(--white);border-radius:var(--radius);font-family:inherit;font-size:.78rem;resize:vertical"></textarea></div>
+<button class="btn btn-red" id="cntBtn" onclick="sendContact()">Send Message <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+</div>
+<div id="cntOk" style="display:none;margin-top:1.5rem;padding:1.2rem;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:var(--radius);text-align:center">
+<div style="font-size:1.5rem;margin-bottom:.3rem">✓</div>
+<p style="font-size:.82rem;font-weight:600;color:var(--white)">Message sent!</p>
+<p style="font-size:.72rem;color:var(--gray-light);margin-top:.2rem">Thomas will get back to you shortly.</p>
+</div>
 <a href="#booking" class="btn btn-red" style="margin-top:1.2rem">Book Free Consultation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 </div>
@@ -1178,8 +1190,10 @@ async function payOrder(){
 const btn=document.querySelector('.co-pay');btn.disabled=true;btn.textContent='Redirecting to payment...';
 try{
 const origin=window.location.origin;
+const emailInput=document.querySelector('#coForm input[type="email"]');
+const customerEmail=emailInput?emailInput.value:'';
 const items=cart.map(i=>({name:i.name,description:i.desc,price:i.price,quantity:i.qty,requiresShipping:true,image:origin+'/'+i.img}));
-const r=await fetch('/api/checkout/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+const r=await fetch('/api/checkout/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items,customerEmail})});
 const d=await r.json();
 if(d.url){window.location.href=d.url}
 else{btn.textContent='Place Order';btn.disabled=false;toast('Error',d.error||'Payment failed')}
@@ -1212,14 +1226,23 @@ h+=`<div class="${c}" ${!past&&!wknd?`onclick="pickDate(${y},${m},${d})"`:''} >$
 document.getElementById('calG').innerHTML=h;
 }
 function chMo(d){calDt.setMonth(calDt.getMonth()+d);renderCal()}
-function pickDate(y,m,d){
+async function pickDate(y,m,d){
 selDate=new Date(y,m,d);selSlot=null;renderCal();
 document.getElementById('slotPanel').classList.add('show');
-document.getElementById('selDateLbl').textContent=selDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-const booked={};slots.forEach(s=>{if(Math.random()<.18)booked[s]=true});
-document.getElementById('slotG').innerHTML=slots.map(s=>{
-const off=booked[s];return`<div class="sl${off?' off':''}" ${off?'':`onclick="pickSlot(this,'${s}')"`}>${s}</div>`;
+const dateStr=selDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+document.getElementById('selDateLbl').textContent=dateStr;
+document.getElementById('slotG').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:.5rem;color:var(--gray);font-size:.75rem">Loading slots...</div>';
+try{
+const r=await fetch('/api/public/slots?date='+encodeURIComponent(selDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})));
+const data=await r.json();
+if(data.slots){
+document.getElementById('slotG').innerHTML=data.slots.map(s=>{
+const off=!s.available;return`<div class="sl${off?' off':''}" ${off?'':`onclick="pickSlot(this,'${s.time}')"`}>${s.time}${off?'<span style="font-size:.5rem;display:block;opacity:.6">booked</span>':''}</div>`;
 }).join('');
+}else throw new Error();
+}catch(e){
+document.getElementById('slotG').innerHTML=slots.map(s=>`<div class="sl" onclick="pickSlot(this,'${s}')">${s}</div>`).join('');
+}
 updBookInfo();
 }
 function pickSlot(el,t){document.querySelectorAll('.sl').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');selSlot=t;updBookInfo()}
@@ -1237,19 +1260,11 @@ if(!selBType||!selDate||!selSlot)return;
 const nm=document.getElementById('bName').value||'there';
 const em=document.getElementById('bEmail').value||'';
 const ph=document.getElementById('bPhone').value||'';
+if(!em||!em.includes('@')){toast('Email Required','Please enter a valid email address.');return}
 const btn=document.getElementById('bookBtn');
 const dateStr=selDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-const priceNum=parseFloat(selBType.pr.replace(/[^0-9.]/g,''));
 
-if(!priceNum||selBType.pr==='Free'){
-document.getElementById('bookFormPanel').style.display='none';
-document.getElementById('calPanel').style.display='none';
-const ok=document.getElementById('bookOk');ok.classList.add('show');
-document.getElementById('bookOkText').innerHTML=`<strong>${selBType.n}</strong><br>${dateStr} at ${selSlot}<br><br>Free consultation confirmed! See you soon, ${nm}!`;
-return;
-}
-
-btn.disabled=true;btn.textContent='Redirecting to payment...';
+btn.disabled=true;btn.textContent='Processing...';
 try{
 const r=await fetch('/api/checkout/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionType:selBType.n,duration:selBType.dur,price:selBType.pr,date:dateStr,time:selSlot,name:nm,email:em,phone:ph})});
 const d=await r.json();
@@ -1257,8 +1272,8 @@ if(d.free){
 document.getElementById('bookFormPanel').style.display='none';
 document.getElementById('calPanel').style.display='none';
 const ok=document.getElementById('bookOk');ok.classList.add('show');
-document.getElementById('bookOkText').innerHTML=`<strong>${selBType.n}</strong><br>${dateStr} at ${selSlot}<br><br>Free consultation confirmed! See you soon, ${nm}!`;
-}else if(d.url){window.location.href=d.url}
+document.getElementById('bookOkText').innerHTML=`<strong>${selBType.n}</strong><br>${dateStr} at ${selSlot}<br><br>Free consultation confirmed! See you soon, ${nm}!<br><small style="color:var(--gray)">Confirmation sent to ${em}</small>`;
+}else if(d.url){btn.textContent='Redirecting to payment...';window.location.href=d.url}
 else{btn.textContent='Confirm Booking';btn.disabled=false;toast('Error',d.error||'Booking failed')}
 }catch(e){btn.textContent='Confirm Booking';btn.disabled=false;toast('Error','Could not connect to payment')}
 }
@@ -1270,7 +1285,33 @@ function togFaq(el){el.parentElement.classList.toggle('open')}
 function togExpand(el){el.classList.toggle('open')}
 
 // ═══ NEWSLETTER ═══
-function subNews(){const e=document.getElementById('newsEmail').value;if(e&&e.includes('@')){document.getElementById('newsForm').style.display='none';document.getElementById('newsOk').style.display='block'}}
+async function subNews(){
+const e=document.getElementById('newsEmail').value;
+if(!e||!e.includes('@'))return;
+const btn=document.querySelector('#newsForm button');btn.disabled=true;btn.textContent='...';
+try{
+const r=await fetch('/api/public/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e})});
+const d=await r.json();
+if(r.ok){document.getElementById('newsForm').style.display='none';document.getElementById('newsOk').style.display='block'}
+else{btn.disabled=false;btn.textContent='Subscribe';toast('Error',d.error||'Could not subscribe')}
+}catch(err){btn.disabled=false;btn.textContent='Subscribe';toast('Error','Network error')}
+}
+
+// ═══ CONTACT FORM ═══
+async function sendContact(){
+const name=document.getElementById('cntName').value.trim();
+const email=document.getElementById('cntEmail').value.trim();
+const subject=document.getElementById('cntSubject').value.trim();
+const message=document.getElementById('cntMsg').value.trim();
+if(!name||!email||!message){toast('Missing Fields','Please fill in name, email, and message.');return}
+const btn=document.getElementById('cntBtn');btn.disabled=true;btn.innerHTML='Sending...';
+try{
+const r=await fetch('/api/public/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,subject,message})});
+const d=await r.json();
+if(r.ok){document.getElementById('cntForm').style.display='none';document.getElementById('cntOk').style.display='block';toast('Message Sent','Thomas will reply soon.')}
+else{btn.disabled=false;btn.innerHTML='Send Message <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';toast('Error',d.error||'Could not send message')}
+}catch(e){btn.disabled=false;btn.innerHTML='Send Message <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';toast('Error','Network error')}
+}
 
 // ═══ CHECKOUT RETURN HANDLING ═══
 (function handleReturn(){
