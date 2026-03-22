@@ -149,11 +149,10 @@ module.exports = async function handler(req, res) {
 
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
-    if (req.body && typeof req.body === 'object') {
-      return resolve(JSON.stringify(req.body));
-    }
+    if (Buffer.isBuffer(req.body)) return resolve(req.body);
+    if (typeof req.body === 'string') return resolve(Buffer.from(req.body));
     const chunks = [];
-    req.on('data', chunk => chunks.push(chunk));
+    req.on('data', chunk => chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk));
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
