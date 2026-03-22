@@ -47,7 +47,27 @@ module.exports = async function handler(req, res) {
   }
 
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return res.status(500).json({ error: 'Stripe not configured' });
+
+  if (!key) {
+    const demoId = 'demo_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    data.bookings.unshift({
+      id: demoId,
+      name: name || '',
+      email,
+      phone: phone || '',
+      sessionType,
+      duration,
+      price: priceNum,
+      date,
+      time,
+      status: 'confirmed',
+      demo: true,
+      createdAt: new Date().toISOString(),
+    });
+    await saveSiteData(data);
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
+    return res.status(200).json({ url: `${origin}?booking=success&demo=true`, id: demoId, demo: true });
+  }
 
   const stripe = new Stripe(key);
 

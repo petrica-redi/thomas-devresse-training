@@ -1,4 +1,5 @@
 const Stripe = require('stripe');
+const { loadSiteData, saveSiteData } = require('../lib/store');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,12 +9,35 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return res.status(500).json({ error: 'Stripe not configured' });
-
-  const stripe = new Stripe(key);
   const { items, customerEmail } = req.body;
 
   if (!items || !items.length) return res.status(400).json({ error: 'No items provided' });
+
+  const subtotal = items.reduce((s, i) => s + i.price * (i.quantity || 1), 0);
+  const shipping = subtotal >= 75 ? 0 : 4.95;
+
+  if (!key) {
+    const data = await loadSiteData();
+    if (!data.orders) data.orders = [];
+    const demoId = 'demo_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    data.orders.unshift({
+      id: demoId,
+      customerName: customerEmail || 'Demo Customer',
+      email: customerEmail || '',
+      items: items.map(i => ({ name: i.name, quantity: i.quantity || 1, unitPrice: i.price, total: i.price * (i.quantity || 1) })),
+      total: subtotal + shipping,
+      currency: 'eur',
+      status: 'paid',
+      demo: true,
+      paidAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    });
+    await saveSiteData(data);
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
+    return res.status(200).json({ url: `${origin}?checkout=success&demo=true`, id: demoId, demo: true });
+  }
+
+  const stripe = new Stripe(key);
 
   try {
     const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
@@ -31,7 +55,6 @@ module.exports = async function handler(req, res) {
       quantity: item.quantity || 1,
     }));
 
-    const subtotal = items.reduce((s, i) => s + i.price * (i.quantity || 1), 0);
     const hasPhysical = items.some(i => i.requiresShipping !== false);
 
     const shippingOptions = hasPhysical ? [

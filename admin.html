@@ -6,626 +6,483 @@
   <title>Admin — DEVRESSE 改</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#0a0a0a;--surface:#111;--surface-2:#1a1a1a;--surface-3:#222;--border:#2a2a2a;--red:#c41e2a;--red-light:#e63946;--red-glow:rgba(196,30,42,.12);--green:#34d399;--green-bg:rgba(52,211,153,.08);--yellow:#fbbf24;--yellow-bg:rgba(251,191,36,.08);--blue:#60a5fa;--blue-bg:rgba(96,165,250,.08);--white:#f5f5f5;--gray:#888;--gray-light:#aaa;--text:#e5e5e5;--radius:6px}
-    html{font-size:14px}
-    body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-    ::selection{background:var(--red);color:#fff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--s3:#222;--bd:#2a2a2a;--red:#c41e2a;--rl:#e63946;--rg:rgba(196,30,42,.12);--green:#34d399;--gbg:rgba(52,211,153,.08);--yellow:#fbbf24;--ybg:rgba(251,191,36,.08);--blue:#60a5fa;--bbg:rgba(96,165,250,.08);--w:#f5f5f5;--g:#888;--gl:#aaa;--t:#e5e5e5;--r:6px}
+html{font-size:14px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;-webkit-font-smoothing:antialiased}
+::selection{background:var(--red);color:#fff}
 
-    /* ── LOGIN ── */
-    .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg)}
-    .login-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2.5rem;text-align:center}
-    .login-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:.3rem}
-    .login-logo span{color:var(--red)}
-    .login-sub{color:var(--gray);font-size:.85rem;margin-bottom:2rem}
-    .field{text-align:left;margin-bottom:1rem}
-    .field label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:.4rem}
-    .field input{width:100%;padding:.7rem .9rem;background:var(--bg);border:1px solid var(--border);color:var(--white);border-radius:var(--radius);font-size:.9rem;transition:border-color .2s}
-    .field input:focus{outline:none;border-color:var(--red)}
-    .field input::placeholder{color:#555}
-    .btn-login{width:100%;padding:.75rem;background:var(--red);color:#fff;border:none;border-radius:var(--radius);font-weight:700;font-size:.85rem;cursor:pointer;transition:background .2s;margin-top:.5rem}
-    .btn-login:hover{background:var(--red-light)}
-    .login-error{color:var(--red-light);font-size:.8rem;margin-top:.75rem;min-height:1.2rem}
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-box{width:100%;max-width:380px;background:var(--s);border:1px solid var(--bd);border-radius:12px;padding:2.5rem;text-align:center}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--w)}.login-logo span{color:var(--red)}
+.login-sub{color:var(--g);font-size:.85rem;margin-bottom:2rem}
+.field{text-align:left;margin-bottom:1rem}
+.field label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g);margin-bottom:.4rem}
+.field input{width:100%;padding:.7rem .9rem;background:var(--bg);border:1px solid var(--bd);color:var(--w);border-radius:var(--r);font-size:.9rem;transition:border-color .2s}
+.field input:focus{outline:none;border-color:var(--red)}
+.btn-login{width:100%;padding:.75rem;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-weight:700;font-size:.85rem;cursor:pointer;margin-top:.5rem}.btn-login:hover{background:var(--rl)}
+.login-error{color:var(--rl);font-size:.8rem;margin-top:.75rem;min-height:1.2rem}
 
-    /* ── LAYOUT ── */
-    .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-    .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-    .sidebar-logo{padding:0 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:.5rem}
-    .sidebar-logo .mark{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--white)}
-    .sidebar-logo .kai{color:var(--red);font-size:.9rem;font-weight:700}
-    .sidebar-logo .badge{font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);background:var(--red-glow);padding:.15rem .5rem;border-radius:20px;margin-left:auto}
-    .nav-section{padding:0 .75rem;margin-bottom:1.5rem}
-    .nav-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);padding:0 .75rem;margin-bottom:.5rem}
-    .nav-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .75rem;border-radius:var(--radius);color:var(--gray-light);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .15s;text-decoration:none;position:relative}
-    .nav-item:hover{background:var(--surface-2);color:var(--white)}
-    .nav-item.active{background:var(--red-glow);color:var(--red)}
-    .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
-    .nav-badge{margin-left:auto;min-width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center}
-    .sidebar-footer{margin-top:auto;padding:1rem 1.5rem;border-top:1px solid var(--border)}
-    .sidebar-user{font-size:.75rem;color:var(--gray);margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sidebar-actions{display:flex;gap:.5rem}
-    .btn-sm{padding:.4rem .7rem;background:var(--surface-2);border:1px solid var(--border);color:var(--gray-light);border-radius:var(--radius);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
-    .btn-sm:hover{border-color:var(--red);color:var(--red)}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--s);border-right:1px solid var(--bd);padding:1.2rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-logo{padding:0 1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.4rem}
+.sb-logo .mark{font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--w)}
+.sb-logo .kai{color:var(--red);font-size:.85rem}
+.sb-logo .badge{font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);background:var(--rg);padding:.12rem .4rem;border-radius:20px;margin-left:auto}
+.nav-s{padding:0 .6rem;margin-bottom:1.2rem}
+.nav-l{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g);padding:0 .6rem;margin-bottom:.4rem}
+.ni{display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;border-radius:var(--r);color:var(--gl);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .15s;position:relative}
+.ni:hover{background:var(--s2);color:var(--w)}.ni.active{background:var(--rg);color:var(--red)}
+.ni svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+.ni .nb{margin-left:auto;min-width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+.sb-foot{margin-top:auto;padding:.8rem 1.2rem;border-top:1px solid var(--bd)}
+.sb-user{font-size:.7rem;color:var(--g);margin-bottom:.4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-acts{display:flex;gap:.4rem}
+.btn-sm{padding:.35rem .6rem;background:var(--s2);border:1px solid var(--bd);color:var(--gl);border-radius:var(--r);font-size:.65rem;font-weight:600;cursor:pointer;text-decoration:none}.btn-sm:hover{border-color:var(--red);color:var(--red)}
 
-    /* ── MAIN ── */
-    .main{padding:2rem 2.5rem;overflow-y:auto}
-    .page-header{margin-bottom:2rem}
-    .page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--white);margin-bottom:.3rem}
-    .page-sub{color:var(--gray);font-size:.85rem}
+.main{padding:1.5rem 2rem;overflow-y:auto}
+.ph{margin-bottom:1.5rem}
+.pt{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--w);margin-bottom:.2rem}
+.ps{color:var(--g);font-size:.8rem}
 
-    /* ── STATS GRID ── */
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
-    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;transition:border-color .2s}
-    .stat-card:hover{border-color:rgba(255,255,255,.08)}
-    .stat-label{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
-    .stat-label svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
-    .stat-value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1}
-    .stat-change{font-size:.7rem;margin-top:.4rem}
-    .stat-up{color:var(--green)}.stat-down{color:var(--red-light)}.stat-neutral{color:var(--gray)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.5rem}
+.sc{background:var(--s);border:1px solid var(--bd);border-radius:8px;padding:1rem 1.2rem}
+.sc-l{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:.4rem;display:flex;align-items:center;gap:.3rem}
+.sc-l svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.sc-v{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--w);line-height:1}
+.sc-c{font-size:.65rem;margin-top:.3rem;color:var(--g)}
 
-    /* ── CARDS ── */
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
-    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
-    .card-title{font-size:1rem;font-weight:700;color:var(--white)}
-    .card-sub{font-size:.75rem;color:var(--gray);margin-top:.2rem}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:8px;padding:1.2rem;margin-bottom:1.2rem}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.ct{font-size:.95rem;font-weight:700;color:var(--w)}
+.cs{font-size:.7rem;color:var(--g);margin-top:.15rem}
 
-    /* ── TABLE ── */
-    .tbl{width:100%;border-collapse:collapse}
-    .tbl th{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);padding:.7rem .8rem;text-align:left;border-bottom:1px solid var(--border)}
-    .tbl td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);font-size:.82rem;vertical-align:middle}
-    .tbl tr:hover td{background:rgba(255,255,255,.015)}
-    .tbl .empty{text-align:center;padding:2.5rem;color:var(--gray)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g);padding:.6rem .7rem;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:.6rem .7rem;border-bottom:1px solid rgba(255,255,255,.03);font-size:.78rem;vertical-align:middle}
+.tbl tr:hover td{background:rgba(255,255,255,.015)}
+.tbl .empty{text-align:center;padding:2rem;color:var(--g)}
 
-    /* ── BADGES ── */
-    .badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:20px;font-size:.65rem;font-weight:700;letter-spacing:.03em}
-    .badge-green{background:var(--green-bg);color:var(--green)}
-    .badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
-    .badge-blue{background:var(--blue-bg);color:var(--blue)}
-    .badge-red{background:var(--red-glow);color:var(--red-light)}
-    .badge-gray{background:rgba(255,255,255,.05);color:var(--gray)}
+.badge{display:inline-flex;align-items:center;padding:.15rem .45rem;border-radius:20px;font-size:.6rem;font-weight:700}
+.b-green{background:var(--gbg);color:var(--green)}.b-yellow{background:var(--ybg);color:var(--yellow)}.b-blue{background:var(--bbg);color:var(--blue)}.b-red{background:var(--rg);color:var(--rl)}.b-gray{background:rgba(255,255,255,.05);color:var(--g)}
 
-    /* ── BUTTONS ── */
-    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:var(--radius);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;border:none}
-    .btn-primary{background:var(--red);color:#fff}.btn-primary:hover{background:var(--red-light)}
-    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--gray-light)}.btn-ghost:hover{border-color:var(--red);color:var(--red)}
-    .btn-danger{background:rgba(196,30,42,.1);color:var(--red-light);border:1px solid rgba(196,30,42,.2)}.btn-danger:hover{background:var(--red);color:#fff}
-    .btn-icon{width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);color:var(--gray);cursor:pointer;transition:all .2s}
-    .btn-icon:hover{border-color:var(--red);color:var(--red)}
-    .btn-icon svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.btn{display:inline-flex;align-items:center;gap:.3rem;padding:.45rem .9rem;border-radius:var(--r);font-size:.7rem;font-weight:700;cursor:pointer;border:none}
+.btn-p{background:var(--red);color:#fff}.btn-p:hover{background:var(--rl)}
+.btn-g{background:transparent;border:1px solid var(--bd);color:var(--gl)}.btn-g:hover{border-color:var(--red);color:var(--red)}
+.btn-d{background:rgba(196,30,42,.1);color:var(--rl);border:1px solid rgba(196,30,42,.2)}.btn-d:hover{background:var(--red);color:#fff}
+.btn-i{width:26px;height:26px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);color:var(--g);cursor:pointer}.btn-i:hover{border-color:var(--red);color:var(--red)}
+.btn-i svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
 
-    /* ── FORMS ── */
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-    .form-group{margin-bottom:1rem}
-    .form-group label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:.35rem}
-    .form-group input,.form-group textarea,.form-group select{width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);color:var(--white);border-radius:var(--radius);font-family:'Inter',sans-serif;font-size:.85rem;transition:border-color .2s}
-    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--red)}
-    .form-group textarea{min-height:100px;resize:vertical}
-    .form-group select{cursor:pointer}
+.fg{margin-bottom:.8rem}
+.fg label{display:block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g);margin-bottom:.3rem}
+.fg input,.fg textarea,.fg select{width:100%;padding:.55rem .7rem;background:var(--bg);border:1px solid var(--bd);color:var(--w);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.82rem}
+.fg input:focus,.fg textarea:focus,.fg select:focus{outline:none;border-color:var(--red)}
+.fg textarea{min-height:80px;resize:vertical}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 
-    /* ── UPLOAD ── */
-    .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;color:var(--gray);cursor:pointer;transition:all .2s;margin-bottom:1rem}
-    .upload-zone:hover{border-color:var(--red);color:var(--gray-light)}
-    .upload-zone input{display:none}
-    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem}
-    .media-item{background:var(--surface-2);border-radius:8px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s}
-    .media-item:hover{border-color:rgba(255,255,255,.1)}
-    .media-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-    .media-item .info{padding:.5rem;font-size:.65rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .media-item .del{width:100%;padding:.35rem;background:var(--surface-3);border:none;color:var(--gray);cursor:pointer;font-size:.65rem;transition:all .2s}
-    .media-item .del:hover{background:var(--red);color:#fff}
+.panel{display:none}.panel.active{display:block}
 
-    /* ── PANELS ── */
-    .panel{display:none}.panel.active{display:block}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;padding:.7rem 1rem;background:var(--s);border:1px solid var(--bd);border-radius:8px;color:var(--w);font-size:.78rem;font-weight:600;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
 
-    /* ── SEARCH ── */
-    .search-bar{position:relative;margin-bottom:1.5rem}
-    .search-bar input{width:100%;padding:.6rem .8rem .6rem 2.2rem;background:var(--surface);border:1px solid var(--border);color:var(--white);border-radius:var(--radius);font-size:.85rem}
-    .search-bar input:focus{outline:none;border-color:var(--red)}
-    .search-bar svg{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--gray);fill:none;stroke-width:2}
+/* ── SECTION EDITOR ── */
+.sec-list{display:flex;flex-direction:column;gap:.8rem}
+.sec-card{background:var(--s);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.sec-card:hover{border-color:rgba(255,255,255,.08)}
+.sec-head{display:flex;align-items:center;gap:.8rem;padding:1rem 1.2rem;cursor:pointer;user-select:none}
+.sec-head:hover{background:rgba(255,255,255,.015)}
+.sec-num{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--red);min-width:28px}
+.sec-name{font-weight:700;font-size:.85rem;color:var(--w);flex:1}
+.sec-desc{font-size:.65rem;color:var(--g)}
+.sec-arrow{color:var(--g);transition:transform .2s;font-size:.8rem}
+.sec-card.open .sec-arrow{transform:rotate(180deg)}
+.sec-body{display:none;padding:0 1.2rem 1.2rem;border-top:1px solid var(--bd)}
+.sec-card.open .sec-body{display:block}
 
-    /* ── TABS ── */
-    .tabs{display:flex;gap:.25rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border)}
-    .tab-btn{padding:.6rem 1rem;background:transparent;border:none;color:var(--gray);cursor:pointer;font-size:.8rem;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
-    .tab-btn:hover{color:var(--white)}
-    .tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem;margin-top:.6rem}
+.img-slot{position:relative;background:var(--s2);border:1px solid var(--bd);border-radius:6px;overflow:hidden;aspect-ratio:1}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.img-slot .img-label{position:absolute;bottom:0;left:0;right:0;padding:.3rem .5rem;background:rgba(0,0,0,.8);font-size:.55rem;color:var(--g);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.img-slot .img-change{position:absolute;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;color:var(--w);font-size:.65rem;font-weight:700}
+.img-slot:hover .img-change{opacity:1}
+.img-slot input[type=file]{display:none}
 
-    /* ── TOAST ── */
-    .toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.8rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.5rem;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5)}
-    .toast.show{transform:translateY(0);opacity:1}
-    .toast.success{border-color:rgba(52,211,153,.3)}
-    .toast.error{border-color:rgba(196,30,42,.3)}
+.upload-zone{border:2px dashed var(--bd);border-radius:8px;padding:1.5rem;text-align:center;color:var(--g);cursor:pointer;transition:all .2s;margin-top:.6rem}
+.upload-zone:hover{border-color:var(--red);color:var(--gl)}
+.upload-zone input{display:none}
 
-    /* ── EMAIL CONFIG ── */
-    .email-config{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;margin-top:1rem}
-    .email-config h4{font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
-    .email-config p{font-size:.75rem;color:var(--gray);line-height:1.6}
-    .email-config code{background:var(--bg);padding:.15rem .4rem;border-radius:3px;font-size:.72rem;color:var(--red)}
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem}
+.mi{background:var(--s2);border-radius:6px;overflow:hidden;border:1px solid var(--bd)}
+.mi img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.mi .info{padding:.4rem;font-size:.6rem;color:var(--g);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi .del{width:100%;padding:.3rem;background:var(--s3);border:none;color:var(--g);cursor:pointer;font-size:.6rem}.mi .del:hover{background:var(--red);color:#fff}
 
-    /* ── RESPONSIVE ── */
-    @media(max-width:1024px){
-      .stats{grid-template-columns:repeat(2,1fr)}
-      .form-row{grid-template-columns:1fr}
-    }
-    @media(max-width:768px){
-      .app{grid-template-columns:1fr}
-      .sidebar{display:none}
-      .main{padding:1.5rem}
-      .stats{grid-template-columns:1fr}
-    }
+.email-cfg{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:1rem;margin-top:.8rem}
+.email-cfg h4{font-size:.8rem;font-weight:700;color:var(--w);margin-bottom:.4rem}
+.email-cfg p{font-size:.7rem;color:var(--g);line-height:1.6}
+.email-cfg code{background:var(--bg);padding:.1rem .35rem;border-radius:3px;font-size:.68rem;color:var(--red)}
+
+@media(max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}.fr{grid-template-columns:1fr}}
+@media(max-width:768px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:1rem}.stats{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN ═══ -->
 <div class="login-page" id="loginPage">
   <div class="login-box">
     <div class="login-logo">DEVRESSE <span>改</span></div>
     <p class="login-sub">Admin Panel</p>
     <form id="loginForm">
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="tomas@devresse.fit" required>
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required>
-      </div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="tomas@devresse.fit" required></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" required></div>
       <div class="login-error" id="loginError"></div>
       <button type="submit" class="btn-login">Sign In</button>
     </form>
   </div>
 </div>
 
-<!-- ═══ APP ═══ -->
 <div class="app" id="app" style="display:none">
+<aside class="sidebar">
+  <div class="sb-logo"><span class="mark">DEVRESSE</span><span class="kai">改</span><span class="badge">Admin</span></div>
+  <div class="nav-s"><div class="nav-l">Overview</div>
+    <div class="ni active" data-page="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+  </div>
+  <div class="nav-s"><div class="nav-l">Pages</div>
+    <div class="ni" data-page="pages"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Sections</div>
+    <div class="ni" data-page="media"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Media Library</div>
+  </div>
+  <div class="nav-s"><div class="nav-l">Business</div>
+    <div class="ni" data-page="bookings"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings<span class="nb" id="navBB" style="display:none">0</span></div>
+    <div class="ni" data-page="orders"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Orders</div>
+    <div class="ni" data-page="subscribers"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Newsletter</div>
+    <div class="ni" data-page="messages"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Messages<span class="nb" id="navMB" style="display:none">0</span></div>
+  </div>
+  <div class="nav-s"><div class="nav-l">Shop</div>
+    <div class="ni" data-page="products"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Products</div>
+    <div class="ni" data-page="services"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Services</div>
+  </div>
+  <div class="nav-s"><div class="nav-l">System</div>
+    <div class="ni" data-page="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+  </div>
+  <div class="sb-foot"><div class="sb-user" id="userEmail">tomas@devresse.fit</div><div class="sb-acts"><a href="/" class="btn-sm">View Site</a><button class="btn-sm" id="logoutBtn">Logout</button></div></div>
+</aside>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <span class="mark">DEVRESSE</span>
-      <span class="kai">改</span>
-      <span class="badge">Admin</span>
-    </div>
+<main class="main">
 
-    <div class="nav-section">
-      <div class="nav-label">Overview</div>
-      <div class="nav-item active" data-page="dashboard">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Business</div>
-      <div class="nav-item" data-page="bookings">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Bookings
-        <span class="nav-badge" id="navBookingsBadge" style="display:none">0</span>
-      </div>
-      <div class="nav-item" data-page="orders">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-        Orders
-      </div>
-      <div class="nav-item" data-page="subscribers">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Newsletter
-      </div>
-      <div class="nav-item" data-page="messages">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        Messages
-        <span class="nav-badge" id="navMsgBadge" style="display:none">0</span>
-      </div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Content</div>
-      <div class="nav-item" data-page="content">
-        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Site Content
-      </div>
-      <div class="nav-item" data-page="media">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Media Library
-      </div>
-      <div class="nav-item" data-page="products">
-        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        Products
-      </div>
-      <div class="nav-item" data-page="services">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Services
-      </div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Settings</div>
-      <div class="nav-item" data-page="settings">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Settings
-      </div>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="sidebar-user" id="userEmail">tomas@devresse.fit</div>
-      <div class="sidebar-actions">
-        <a href="/" class="btn-sm">View Site</a>
-        <button class="btn-sm" id="logoutBtn">Logout</button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="main">
-
-    <!-- ═══ DASHBOARD ═══ -->
-    <div class="panel active" id="dashboardPanel">
-      <div class="page-header">
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-sub">Welcome back, Thomas. Here's your business overview.</p>
-      </div>
-      <div class="stats" id="statsGrid">
-        <div class="stat-card"><div class="stat-label"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> Bookings</div><div class="stat-value" id="sTotalBookings">—</div><div class="stat-change stat-neutral" id="sBookingsMonth">This month: —</div></div>
-        <div class="stat-card"><div class="stat-label"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg> Orders</div><div class="stat-value" id="sTotalOrders">—</div><div class="stat-change stat-neutral" id="sOrdersMonth">This month: —</div></div>
-        <div class="stat-card"><div class="stat-label"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Revenue</div><div class="stat-value" id="sTotalRevenue">—</div><div class="stat-change stat-neutral" id="sRevenueMonth">This month: —</div></div>
-        <div class="stat-card"><div class="stat-label"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Subscribers</div><div class="stat-value" id="sTotalSubs">—</div><div class="stat-change stat-neutral" id="sMessages">Messages: —</div></div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Recent Bookings</span></div>
-          <table class="tbl"><thead><tr><th>Client</th><th>Type</th><th>Date</th><th>Status</th></tr></thead><tbody id="dashBookings"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody></table>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Recent Messages</span></div>
-          <table class="tbl"><thead><tr><th>From</th><th>Subject</th><th>Date</th></tr></thead><tbody id="dashMessages"><tr><td colspan="3" class="empty">Loading...</td></tr></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ BOOKINGS ═══ -->
-    <div class="panel" id="bookingsPanel">
-      <div class="page-header"><h1 class="page-title">Bookings</h1><p class="page-sub">Manage client sessions and consultations</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">All Bookings</span></div>
-        <table class="tbl"><thead><tr><th>Client</th><th>Email</th><th>Type</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingsList"><tr><td colspan="7" class="empty">No bookings yet</td></tr></tbody></table>
-      </div>
-    </div>
-
-    <!-- ═══ ORDERS ═══ -->
-    <div class="panel" id="ordersPanel">
-      <div class="page-header"><h1 class="page-title">Orders</h1><p class="page-sub">E-shop orders and fulfillment</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">All Orders</span></div>
-        <table class="tbl"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody id="ordersList"><tr><td colspan="6" class="empty">No orders yet</td></tr></tbody></table>
-      </div>
-    </div>
-
-    <!-- ═══ SUBSCRIBERS ═══ -->
-    <div class="panel" id="subscribersPanel">
-      <div class="page-header"><h1 class="page-title">Newsletter Subscribers</h1><p class="page-sub">Email list management</p></div>
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">All Subscribers</span>
-          <button class="btn btn-ghost" onclick="exportSubscribers()">Export CSV</button>
-        </div>
-        <table class="tbl"><thead><tr><th>Email</th><th>Source</th><th>Subscribed</th><th>Actions</th></tr></thead><tbody id="subsList"><tr><td colspan="4" class="empty">No subscribers yet</td></tr></tbody></table>
-      </div>
-    </div>
-
-    <!-- ═══ MESSAGES ═══ -->
-    <div class="panel" id="messagesPanel">
-      <div class="page-header"><h1 class="page-title">Messages</h1><p class="page-sub">Contact form submissions</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">All Messages</span></div>
-        <table class="tbl"><thead><tr><th>From</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead><tbody id="msgList"><tr><td colspan="6" class="empty">No messages yet</td></tr></tbody></table>
-      </div>
-    </div>
-
-    <!-- ═══ CONTENT ═══ -->
-    <div class="panel" id="contentPanel">
-      <div class="page-header"><h1 class="page-title">Site Content</h1><p class="page-sub">Edit website text and copy</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Website Text</span></div>
-        <div class="form-row">
-          <div class="form-group"><label>Hero Title</label><input type="text" id="c_hero_title" placeholder="Small Steps. Big Transformations."></div>
-          <div class="form-group"><label>Hero Subtitle</label><input type="text" id="c_hero_sub" placeholder="Rooted in the Japanese philosophy of Kaizen..."></div>
-        </div>
-        <div class="form-group"><label>About Text</label><textarea id="c_about" placeholder="With over 4 years of professional experience..."></textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Philosophy Quote</label><input type="text" id="c_quote" placeholder="The journey of a thousand miles..."></div>
-          <div class="form-group"><label>Footer Tagline</label><input type="text" id="c_footer" placeholder="Small daily improvements will take you far."></div>
-        </div>
-        <button class="btn btn-primary" id="saveContent">Save Content</button>
-        <span id="contentStatus" style="margin-left:.8rem;font-size:.8rem"></span>
-      </div>
-    </div>
-
-    <!-- ═══ MEDIA ═══ -->
-    <div class="panel" id="mediaPanel">
-      <div class="page-header"><h1 class="page-title">Media Library</h1><p class="page-sub">Upload and manage images</p></div>
-      <div class="card">
-        <div class="upload-zone" id="uploadZone">
-          <svg viewBox="0 0 24 24" style="width:32px;height:32px;stroke:var(--gray);fill:none;stroke-width:1.5;margin-bottom:.5rem"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <div style="font-size:.85rem">Drop images here or click to upload</div>
-          <input type="file" id="fileInput" accept="image/*">
-        </div>
-        <div id="uploadStatus" style="font-size:.8rem;margin-bottom:1rem"></div>
-        <div id="mediaList" class="media-grid"></div>
-      </div>
-    </div>
-
-    <!-- ═══ PRODUCTS ═══ -->
-    <div class="panel" id="productsPanel">
-      <div class="page-header"><h1 class="page-title">Products</h1><p class="page-sub">Manage e-shop inventory</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Products JSON</span><div class="card-sub">Edit the product data structure and save</div></div>
-        <div class="form-group"><textarea id="productsJson" style="min-height:350px;font-family:'SF Mono',Monaco,monospace;font-size:.78rem"></textarea></div>
-        <button class="btn btn-primary" id="saveProducts">Save Products</button>
-        <span id="productsStatus" style="margin-left:.8rem;font-size:.8rem"></span>
-      </div>
-    </div>
-
-    <!-- ═══ SERVICES ═══ -->
-    <div class="panel" id="servicesPanel">
-      <div class="page-header"><h1 class="page-title">Services</h1><p class="page-sub">Manage training packages and pricing</p></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Services JSON</span><div class="card-sub">Edit training services and save</div></div>
-        <div class="form-group"><textarea id="servicesJson" style="min-height:250px;font-family:'SF Mono',Monaco,monospace;font-size:.78rem"></textarea></div>
-        <button class="btn btn-primary" id="saveServices">Save Services</button>
-        <span id="servicesStatus" style="margin-left:.8rem;font-size:.8rem"></span>
-      </div>
-    </div>
-
-    <!-- ═══ SETTINGS ═══ -->
-    <div class="panel" id="settingsPanel">
-      <div class="page-header"><h1 class="page-title">Settings</h1><p class="page-sub">Configuration and email setup</p></div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Admin Account</span></div>
-        <div class="form-row">
-          <div class="form-group"><label>Admin Email</label><input type="text" value="tomas@devresse.fit" disabled style="opacity:.6"></div>
-          <div class="form-group"><label>Role</label><input type="text" value="Super Admin" disabled style="opacity:.6"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Email Forwarding</span></div>
-        <p style="font-size:.82rem;color:var(--gray-light);margin-bottom:1rem">All emails sent to <strong style="color:var(--white)">@devresse.fit</strong> are forwarded to <strong style="color:var(--red)">thom.devresse@gmail.com</strong></p>
-        <div class="email-config">
-          <h4>Cloudflare Email Routing (Recommended)</h4>
-          <p>If your domain is on Cloudflare, go to <strong>Email → Email Routing → Routes</strong> and add:</p>
-          <p style="margin-top:.5rem"><code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p>
-          <p style="margin-top:.5rem">This catches all emails: tomas@, contact@, info@, etc.</p>
-        </div>
-        <div class="email-config" style="margin-top:.8rem">
-          <h4>DNS Records Required</h4>
-          <p>If using a different provider, add these MX records:</p>
-          <p style="margin-top:.5rem"><code>MX  devresse.fit  10  route1.mx.cloudflare.net</code></p>
-          <p><code>MX  devresse.fit  51  route2.mx.cloudflare.net</code></p>
-          <p><code>MX  devresse.fit  26  route3.mx.cloudflare.net</code></p>
-          <p style="margin-top:.5rem">Or for Google Workspace forwarding:</p>
-          <p><code>MX  devresse.fit  1  ASPMX.L.GOOGLE.COM</code></p>
-        </div>
-        <div class="email-config" style="margin-top:.8rem">
-          <h4>Vercel Email (if domain is on Vercel)</h4>
-          <p>Go to <strong>Vercel Dashboard → Domain → devresse.fit → Email</strong></p>
-          <p style="margin-top:.5rem">Add forwarding rule: <code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Environment Variables</span></div>
-        <p style="font-size:.82rem;color:var(--gray-light);margin-bottom:1rem">These are configured in Vercel Dashboard → Settings → Environment Variables</p>
-        <table class="tbl">
-          <thead><tr><th>Variable</th><th>Status</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>ADMIN_EMAIL</code></td><td><span class="badge badge-green">Set</span></td><td style="color:var(--gray)">tomas@devresse.fit</td></tr>
-            <tr><td><code>ADMIN_PASSWORD_HASH</code></td><td><span class="badge badge-green">Set</span></td><td style="color:var(--gray)">bcrypt hash of admin password</td></tr>
-            <tr><td><code>JWT_SECRET</code></td><td><span class="badge badge-yellow">Check</span></td><td style="color:var(--gray)">Random secret for JWT signing</td></tr>
-            <tr><td><code>BLOB_READ_WRITE_TOKEN</code></td><td><span class="badge badge-yellow">Check</span></td><td style="color:var(--gray)">Vercel Blob storage token</td></tr>
-            <tr><td><code>STRIPE_SECRET_KEY</code></td><td><span class="badge badge-yellow">Check</span></td><td style="color:var(--gray)">Stripe API key for payments</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </main>
+<!-- ═══ DASHBOARD ═══ -->
+<div class="panel active" id="dashboardPanel">
+  <div class="ph"><h1 class="pt">Dashboard</h1><p class="ps">Welcome back, Thomas. Here's your business overview.</p></div>
+  <div class="stats">
+    <div class="sc"><div class="sc-l"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</div><div class="sc-v" id="sB">—</div><div class="sc-c" id="sBm">This month: —</div></div>
+    <div class="sc"><div class="sc-l"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Orders</div><div class="sc-v" id="sO">—</div><div class="sc-c" id="sOm">This month: —</div></div>
+    <div class="sc"><div class="sc-l"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue</div><div class="sc-v" id="sR">—</div><div class="sc-c" id="sRm">This month: —</div></div>
+    <div class="sc"><div class="sc-l"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Subscribers</div><div class="sc-v" id="sS">—</div><div class="sc-c" id="sMg">Messages: —</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card"><div class="ch"><span class="ct">Recent Bookings</span></div><table class="tbl"><thead><tr><th>Client</th><th>Type</th><th>Date</th><th>Status</th></tr></thead><tbody id="dB"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody></table></div>
+    <div class="card"><div class="ch"><span class="ct">Recent Messages</span></div><table class="tbl"><thead><tr><th>From</th><th>Subject</th><th>Date</th></tr></thead><tbody id="dM"><tr><td colspan="3" class="empty">Loading...</td></tr></tbody></table></div>
+  </div>
 </div>
 
-<!-- Toast -->
+<!-- ═══ PAGES / SECTIONS EDITOR ═══ -->
+<div class="panel" id="pagesPanel">
+  <div class="ph"><h1 class="pt">Edit Sections</h1><p class="ps">Click any section to edit its text and images. Changes are saved to the admin store.</p></div>
+  <div class="sec-list" id="secList"></div>
+</div>
+
+<!-- ═══ MEDIA ═══ -->
+<div class="panel" id="mediaPanel">
+  <div class="ph"><h1 class="pt">Media Library</h1><p class="ps">Upload and manage all images. Use these in any section.</p></div>
+  <div class="card">
+    <div class="upload-zone" id="uploadZone"><svg viewBox="0 0 24 24" style="width:28px;height:28px;stroke:var(--g);fill:none;stroke-width:1.5;margin-bottom:.4rem"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div style="font-size:.8rem">Drop images here or click to upload</div><input type="file" id="fileInput" accept="image/*" multiple></div>
+    <div id="uploadStatus" style="font-size:.75rem;margin:.6rem 0"></div>
+    <div id="mediaList" class="media-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ BOOKINGS ═══ -->
+<div class="panel" id="bookingsPanel">
+  <div class="ph"><h1 class="pt">Bookings</h1><p class="ps">Manage client sessions</p></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Client</th><th>Email</th><th>Type</th><th>Date</th><th>Time</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bkList"><tr><td colspan="8" class="empty">No bookings yet</td></tr></tbody></table></div>
+</div>
+
+<!-- ═══ ORDERS ═══ -->
+<div class="panel" id="ordersPanel">
+  <div class="ph"><h1 class="pt">Orders</h1><p class="ps">E-shop orders</p></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody id="orList"><tr><td colspan="6" class="empty">No orders yet</td></tr></tbody></table></div>
+</div>
+
+<!-- ═══ SUBSCRIBERS ═══ -->
+<div class="panel" id="subscribersPanel">
+  <div class="ph"><h1 class="pt">Newsletter</h1><p class="ps">Subscriber list</p></div>
+  <div class="card"><div class="ch"><span class="ct">All Subscribers</span><button class="btn btn-g" onclick="exportCSV()">Export CSV</button></div><table class="tbl"><thead><tr><th>Email</th><th>Source</th><th>Date</th><th></th></tr></thead><tbody id="sbList"><tr><td colspan="4" class="empty">No subscribers</td></tr></tbody></table></div>
+</div>
+
+<!-- ═══ MESSAGES ═══ -->
+<div class="panel" id="messagesPanel">
+  <div class="ph"><h1 class="pt">Messages</h1><p class="ps">Contact form submissions</p></div>
+  <div class="card"><table class="tbl"><thead><tr><th>From</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th></th></tr></thead><tbody id="mgList"><tr><td colspan="6" class="empty">No messages</td></tr></tbody></table></div>
+</div>
+
+<!-- ═══ PRODUCTS ═══ -->
+<div class="panel" id="productsPanel">
+  <div class="ph"><h1 class="pt">Products</h1><p class="ps">E-shop inventory (JSON)</p></div>
+  <div class="card"><div class="fg"><textarea id="prodJson" style="min-height:300px;font-family:monospace;font-size:.75rem"></textarea></div><button class="btn btn-p" id="saveProd">Save Products</button></div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<div class="panel" id="servicesPanel">
+  <div class="ph"><h1 class="pt">Services</h1><p class="ps">Training packages (JSON)</p></div>
+  <div class="card"><div class="fg"><textarea id="srvJson" style="min-height:200px;font-family:monospace;font-size:.75rem"></textarea></div><button class="btn btn-p" id="saveSrv">Save Services</button></div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div class="panel" id="settingsPanel">
+  <div class="ph"><h1 class="pt">Settings</h1><p class="ps">Configuration</p></div>
+  <div class="card"><div class="ch"><span class="ct">Admin Account</span></div><div class="fr"><div class="fg"><label>Email</label><input value="tomas@devresse.fit" disabled style="opacity:.6"></div><div class="fg"><label>Role</label><input value="Super Admin" disabled style="opacity:.6"></div></div></div>
+  <div class="card"><div class="ch"><span class="ct">Email Forwarding</span></div><p style="font-size:.78rem;color:var(--gl);margin-bottom:.8rem">All emails to <strong style="color:var(--w)">@devresse.fit</strong> → <strong style="color:var(--red)">thom.devresse@gmail.com</strong></p>
+    <div class="email-cfg"><h4>Cloudflare Email Routing</h4><p>Email → Email Routing → Routes: <code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p></div>
+    <div class="email-cfg" style="margin-top:.6rem"><h4>Vercel Email</h4><p>Vercel Dashboard → Domain → devresse.fit → Email: <code>*@devresse.fit</code> → <code>thom.devresse@gmail.com</code></p></div>
+  </div>
+  <div class="card"><div class="ch"><span class="ct">Stripe</span></div><p style="font-size:.78rem;color:var(--gl)">Status: <span class="badge b-yellow" id="stripeStatus">Demo Mode</span> — No real charges. Set <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.68rem;color:var(--red)">STRIPE_SECRET_KEY</code> in Vercel env vars to enable live payments.</p></div>
+</div>
+
+</main>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const API='';
-function api(path,opts={}){return fetch((API||'')+path,{...opts,credentials:'include',headers:{...opts.headers,'Content-Type':'application/json'}})}
-function toast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),2500)}
-function fmtDate(d){if(!d)return '—';const dt=new Date(d);return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
-function statusBadge(s){const map={pending:'badge-yellow',confirmed:'badge-blue',completed:'badge-green',cancelled:'badge-red',paid:'badge-green',shipped:'badge-blue',delivered:'badge-green',refunded:'badge-red'};return `<span class="badge ${map[s]||'badge-gray'}">${s||'unknown'}</span>`}
+const A='';
+function api(p,o={}){return fetch((A||'')+p,{...o,credentials:'include',headers:{...o.headers,'Content-Type':'application/json'}})}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.className='toast show';setTimeout(()=>t.classList.remove('show'),2200)}
+function fD(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function sB(s){const m={pending:'b-yellow',confirmed:'b-blue',completed:'b-green',cancelled:'b-red',paid:'b-green',shipped:'b-blue',delivered:'b-green',refunded:'b-red',expired:'b-gray'};return`<span class="badge ${m[s]||'b-gray'}">${s||'—'}</span>`}
 
 // ═══ AUTH ═══
-async function checkAuth(){
-  try{const r=await api('/api/auth/me');if(r.ok){const u=await r.json();document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='grid';document.getElementById('userEmail').textContent=u.email||'Admin';loadDashboard();return true}}catch(e){}
-  return false;
-}
+async function checkAuth(){try{const r=await api('/api/auth/me');if(r.ok){const u=await r.json();document.getElementById('loginPage').style.display='none';document.getElementById('app').style.display='grid';document.getElementById('userEmail').textContent=u.email||'Admin';loadDash();return true}}catch(e){}return false}
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const err=document.getElementById('loginError');err.textContent='';const r=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:document.getElementById('loginEmail').value,password:document.getElementById('loginPassword').value})});if(!r.ok){const d=await r.json().catch(()=>({}));err.textContent=d.error||'Invalid credentials';return}await checkAuth()});
+document.getElementById('logoutBtn').addEventListener('click',async()=>{await api('/api/auth/logout',{method:'POST'});document.getElementById('loginPage').style.display='flex';document.getElementById('app').style.display='none'});
 
-document.getElementById('loginForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const err=document.getElementById('loginError');err.textContent='';
-  const r=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:document.getElementById('loginEmail').value,password:document.getElementById('loginPassword').value})});
-  if(!r.ok){const d=await r.json().catch(()=>({}));err.textContent=d.error||'Invalid credentials';return}
-  await checkAuth();
-});
-
-document.getElementById('logoutBtn').addEventListener('click',async()=>{
-  await api('/api/auth/logout',{method:'POST'});
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('app').style.display='none';
-});
-
-// ═══ NAVIGATION ═══
-document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>{
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+// ═══ NAV ═══
+document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-  n.classList.add('active');
-  const page=n.dataset.page;
-  document.getElementById(page+'Panel').classList.add('active');
-  if(page==='bookings')loadBookings();
-  if(page==='orders')loadOrders();
-  if(page==='subscribers')loadSubscribers();
-  if(page==='messages')loadMessages();
-  if(page==='content')loadContent();
-  if(page==='media')loadMedia();
-  if(page==='products')loadProducts();
-  if(page==='services')loadServices();
+  n.classList.add('active');const p=n.dataset.page;
+  document.getElementById(p+'Panel').classList.add('active');
+  const loaders={dashboard:loadDash,pages:loadPages,media:loadMedia,bookings:loadBookings,orders:loadOrders,subscribers:loadSubs,messages:loadMsgs,products:loadProd,services:loadSrv};
+  if(loaders[p])loaders[p]();
 }));
 
 // ═══ DASHBOARD ═══
-async function loadDashboard(){
-  try{
-    const r=await api('/api/admin/stats');
-    if(!r.ok)return;
-    const s=await r.json();
-    document.getElementById('sTotalBookings').textContent=s.totalBookings;
-    document.getElementById('sBookingsMonth').textContent='This month: '+s.bookingsThisMonth+(s.pendingBookings?' · '+s.pendingBookings+' pending':'');
-    document.getElementById('sTotalOrders').textContent=s.totalOrders;
-    document.getElementById('sOrdersMonth').textContent='This month: '+s.ordersThisMonth;
-    document.getElementById('sTotalRevenue').textContent='€'+s.totalRevenue.toFixed(0);
-    document.getElementById('sRevenueMonth').textContent='This month: €'+s.revenueThisMonth.toFixed(0);
-    document.getElementById('sTotalSubs').textContent=s.totalSubscribers;
-    document.getElementById('sMessages').textContent='Messages: '+s.totalMessages+(s.unreadMessages?' · '+s.unreadMessages+' unread':'');
-    if(s.unreadMessages>0){const b=document.getElementById('navMsgBadge');b.textContent=s.unreadMessages;b.style.display='flex'}
-    if(s.pendingBookings>0){const b=document.getElementById('navBookingsBadge');b.textContent=s.pendingBookings;b.style.display='flex'}
+async function loadDash(){
+  try{const r=await api('/api/admin/stats');if(!r.ok)return;const s=await r.json();
+  document.getElementById('sB').textContent=s.totalBookings;document.getElementById('sBm').textContent='This month: '+s.bookingsThisMonth;
+  document.getElementById('sO').textContent=s.totalOrders;document.getElementById('sOm').textContent='This month: '+s.ordersThisMonth;
+  document.getElementById('sR').textContent='€'+s.totalRevenue.toFixed(0);document.getElementById('sRm').textContent='This month: €'+s.revenueThisMonth.toFixed(0);
+  document.getElementById('sS').textContent=s.totalSubscribers;document.getElementById('sMg').textContent='Messages: '+s.totalMessages+(s.unreadMessages?' · '+s.unreadMessages+' unread':'');
+  if(s.unreadMessages>0){const b=document.getElementById('navMB');b.textContent=s.unreadMessages;b.style.display='flex'}
+  if(s.pendingBookings>0){const b=document.getElementById('navBB');b.textContent=s.pendingBookings;b.style.display='flex'}
   }catch(e){}
+  try{const r=await api('/api/admin/bookings');if(r.ok){const l=await r.json();document.getElementById('dB').innerHTML=l.length===0?'<tr><td colspan="4" class="empty">No bookings</td></tr>':l.slice(0,5).map(b=>`<tr><td>${b.name||'—'}</td><td>${b.sessionType||'—'}</td><td>${fD(b.date||b.createdAt)}</td><td>${sB(b.status)}</td></tr>`).join('')}}catch(e){}
+  try{const r=await api('/api/admin/messages');if(r.ok){const l=await r.json();document.getElementById('dM').innerHTML=l.length===0?'<tr><td colspan="3" class="empty">No messages</td></tr>':l.slice(0,5).map(m=>`<tr><td style="${m.read?'':'font-weight:700;color:var(--w)'}">${m.name||'—'}</td><td>${m.subject||'—'}</td><td>${fD(m.createdAt)}</td></tr>`).join('')}}catch(e){}
+}
 
+// ═══ SECTIONS / PAGES EDITOR ═══
+const SECTIONS=[
+  {id:'hero',name:'Hero',num:'01',desc:'Main banner, headline, subtitle, stats, hero image',
+   fields:[{k:'hero_tag',l:'Tag Line',ph:'Premium Coaching — Brussels'},{k:'hero_h1',l:'Headline (HTML)',ph:'Small Steps.<br><span class="red">Big</span><br>Transformations.',type:'textarea'},{k:'hero_sub',l:'Subtitle',ph:'Rooted in the Japanese philosophy...',type:'textarea'}],
+   images:[{k:'hero_img',l:'Hero Image',cur:'images/hero-thomas-branded.png'}]},
+  {id:'philosophy',name:'Philosophy / Method',num:'02',desc:'Kaizen method cards, section title',
+   fields:[{k:'phil_tag',l:'Tag',ph:'The Kaizen Method'},{k:'phil_title',l:'Title (HTML)',ph:'How I Get You Results'},{k:'phil_sub',l:'Subtitle',ph:'A structured, progressive approach...',type:'textarea'},
+   {k:'phil_1_h',l:'Card 1 Title',ph:'Build Foundations'},{k:'phil_1_p',l:'Card 1 Text',ph:'Starting with a thorough...',type:'textarea'},
+   {k:'phil_2_h',l:'Card 2 Title',ph:'Step by Step'},{k:'phil_2_p',l:'Card 2 Text',ph:'Personalized exercise...',type:'textarea'},
+   {k:'phil_3_h',l:'Card 3 Title',ph:'Re-assessments'},{k:'phil_3_p',l:'Card 3 Text',ph:'Your program evolves...',type:'textarea'}],
+   images:[]},
+  {id:'gallery',name:'Gallery Strip',num:'03',desc:'6 photos shown between Philosophy and About',
+   fields:[],
+   images:[{k:'gal_1',l:'Photo 1',cur:'images/1019.jpg'},{k:'gal_2',l:'Photo 2',cur:'images/624.jpg'},{k:'gal_3',l:'Photo 3',cur:'images/403.jpg'},{k:'gal_4',l:'Photo 4',cur:'images/245.jpg'},{k:'gal_5',l:'Photo 5',cur:'images/913.jpg'},{k:'gal_6',l:'Photo 6',cur:'images/1054.jpg'}]},
+  {id:'about',name:'About Thomas',num:'04',desc:'Portrait, bio text, values, certifications',
+   fields:[{k:'about_tag',l:'Tag',ph:'About Thomas'},{k:'about_title',l:'Title (HTML)',ph:'Your Coach. Your Competitive Edge.'},{k:'about_sub',l:'Bio Text',ph:'4+ years coaching...',type:'textarea'},
+   {k:'val_1_h',l:'Value 1',ph:'Mastery'},{k:'val_2_h',l:'Value 2',ph:'Strategy'},{k:'val_3_h',l:'Value 3',ph:'Accountability'},{k:'val_4_h',l:'Value 4',ph:'Compassion'}],
+   images:[{k:'about_img',l:'Portrait',cur:'images/thomas-portrait.png'}]},
+  {id:'video',name:'Video Section',num:'05',desc:'Background image for video section',
+   fields:[],
+   images:[{k:'video_img',l:'Video Background',cur:'images/1054.jpg'}]},
+  {id:'services',name:'Services',num:'06',desc:'Training packages, pricing',
+   fields:[{k:'srv_tag',l:'Tag',ph:'Services'},{k:'srv_title',l:'Title',ph:'What I Offer'},
+   {k:'srv_1_h',l:'Service 1 Title',ph:'Personal Training'},{k:'srv_1_p',l:'Service 1 Desc',ph:'One-on-one coaching...',type:'textarea'},
+   {k:'srv_2_h',l:'Service 2 Title',ph:'Nutrition Coaching'},{k:'srv_2_p',l:'Service 2 Desc',ph:'Sustainable nutrition...',type:'textarea'},
+   {k:'srv_3_h',l:'Service 3 Title',ph:'Body Transformations'},{k:'srv_3_p',l:'Service 3 Desc',ph:'Holistic approach...',type:'textarea'},
+   {k:'srv_4_h',l:'Service 4 Title',ph:'Online Coaching'},{k:'srv_4_p',l:'Service 4 Desc',ph:'Premium remote coaching...',type:'textarea'}],
+   images:[]},
+  {id:'booking',name:'Booking',num:'07',desc:'Session types, prices, calendar',
+   fields:[{k:'book_tag',l:'Tag',ph:'Book a Session'},{k:'book_title',l:'Title (HTML)',ph:'Reserve Your Spot'},{k:'book_sub',l:'Subtitle',ph:'Pick a type, date, and time...'}],
+   images:[]},
+  {id:'shop',name:'E-Shop',num:'08',desc:'Product images and data',
+   fields:[{k:'shop_tag',l:'Tag',ph:'E-Shop'},{k:'shop_title',l:'Title (HTML)',ph:'Devresse Nutrition'},{k:'shop_sub',l:'Subtitle',ph:'The supplements I use and recommend...'}],
+   images:[{k:'prod_1',l:'Whey Protein',cur:'images/product-whey-protein.jpg'},{k:'prod_2',l:'Creatine',cur:'images/product-creatine.jpg'},{k:'prod_3',l:'Omega-3',cur:'images/product-omega3.jpg'},{k:'prod_4',l:'Pre-Workout',cur:'images/product-preworkout.jpg'},{k:'prod_5',l:'Collagen',cur:'images/product-collagen.jpg'},{k:'prod_6',l:'Magnesium',cur:'images/product-magnesium.jpg'},{k:'prod_7',l:'BCAA',cur:'images/product-bcaa.jpg'},{k:'prod_8',l:'Multivitamin',cur:'images/product-multivitamin.jpg'}]},
+  {id:'transformations',name:'Transformations',num:'09',desc:'Before/after client photos',
+   fields:[],
+   images:[{k:'tf_1',l:'Transform 1',cur:'images/tf1-composite.jpg'},{k:'tf_2',l:'Transform 2',cur:'images/tf2-composite.jpg'},{k:'tf_3',l:'Transform 3',cur:'images/tf3-composite.jpg'}]},
+  {id:'testimonials',name:'Testimonials',num:'10',desc:'Client reviews carousel',
+   fields:[{k:'testi_tag',l:'Tag',ph:'Client Stories'},{k:'testi_title',l:'Title',ph:'What They Say'}],
+   images:[]},
+  {id:'resources',name:'Resources',num:'11',desc:'Free downloadable resources',
+   fields:[{k:'res_tag',l:'Tag',ph:'Free Resources'},{k:'res_title',l:'Title (HTML)',ph:'Training Resources'}],
+   images:[]},
+  {id:'faq',name:'FAQ',num:'12',desc:'Frequently asked questions',
+   fields:[{k:'faq_tag',l:'Tag',ph:'FAQ'},{k:'faq_title',l:'Title',ph:'Common Questions'}],
+   images:[]},
+  {id:'contact',name:'Contact',num:'13',desc:'Contact info, form, locations',
+   fields:[{k:'cnt_tag',l:'Tag',ph:'Get Started'},{k:'cnt_title',l:'Title',ph:'Based in Brussels'},{k:'cnt_h',l:'Heading',ph:'Begin Your Kaizen Journey'}],
+   images:[{k:'cnt_img',l:'Contact Photo',cur:'images/thomas-coaching.png'}]},
+  {id:'cta',name:'Call to Action',num:'14',desc:'Bottom CTA banner',
+   fields:[{k:'cta_title',l:'Title (HTML)',ph:'1% Better. Every Day.'},{k:'cta_sub',l:'Subtitle',ph:'Stop chasing quick fixes...'},{k:'cta_btn',l:'Button Text',ph:'Start Today'}],
+   images:[]},
+  {id:'footer',name:'Footer',num:'15',desc:'Footer text, links, social',
+   fields:[{k:'foot_desc',l:'Description',ph:'Personal training in Brussels...',type:'textarea'}],
+   images:[]},
+];
+
+let sectionData={};
+
+async function loadPages(){
+  try{const r=await api('/api/admin/content');if(r.ok)sectionData=await r.json()}catch(e){}
+  const el=document.getElementById('secList');
+  el.innerHTML=SECTIONS.map(s=>{
+    const fHtml=s.fields.map(f=>{
+      const v=sectionData[f.k]||'';
+      if(f.type==='textarea')return`<div class="fg"><label>${f.l}</label><textarea data-key="${f.k}" placeholder="${f.ph}">${v}</textarea></div>`;
+      return`<div class="fg"><label>${f.l}</label><input data-key="${f.k}" value="${v}" placeholder="${f.ph}"></div>`;
+    }).join('');
+    const iHtml=s.images.length?`<div style="margin-top:.8rem"><label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g);margin-bottom:.4rem">Images</label><div class="img-grid">${s.images.map(img=>{
+      const src=sectionData[img.k]||img.cur;
+      return`<div class="img-slot"><img src="${src}" alt="${img.l}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect fill=%22%23222%22 width=%2280%22 height=%2280%22/><text x=%2240%22 y=%2244%22 text-anchor=%22middle%22 fill=%22%23555%22 font-size=%2210%22>No image</text></svg>'"><div class="img-label">${img.l}</div><div class="img-change" onclick="this.querySelector('input').click()">Change<input type="file" accept="image/*" onchange="uploadSecImg(this,'${img.k}','${s.id}')"></div></div>`;
+    }).join('')}</div></div>`:'';
+    return`<div class="sec-card" id="sec_${s.id}"><div class="sec-head" onclick="togSec('${s.id}')"><div class="sec-num">${s.num}</div><div style="flex:1"><div class="sec-name">${s.name}</div><div class="sec-desc">${s.desc}</div></div><div class="sec-arrow">▾</div></div><div class="sec-body">${fHtml}${iHtml}${s.fields.length?`<button class="btn btn-p" style="margin-top:.6rem" onclick="saveSection('${s.id}')">Save ${s.name}</button>`:''}</div></div>`;
+  }).join('');
+}
+
+function togSec(id){document.getElementById('sec_'+id).classList.toggle('open')}
+
+async function saveSection(id){
+  const sec=SECTIONS.find(s=>s.id===id);if(!sec)return;
+  const card=document.getElementById('sec_'+id);
+  const updates={};
+  sec.fields.forEach(f=>{
+    const el=card.querySelector(`[data-key="${f.k}"]`);
+    if(el)updates[f.k]=el.value;
+  });
+  Object.assign(sectionData,updates);
+  const r=await api('/api/admin/content',{method:'PUT',body:JSON.stringify(sectionData)});
+  if(r.ok)toast(sec.name+' saved!');else toast('Save failed');
+}
+
+async function uploadSecImg(input,key,secId){
+  const file=input.files[0];if(!file)return;
+  const slot=input.closest('.img-slot');
+  const img=slot.querySelector('img');
+  const label=slot.querySelector('.img-change');
+  label.textContent='Uploading...';
   try{
-    const r=await api('/api/admin/bookings');if(r.ok){const list=await r.json();
-    document.getElementById('dashBookings').innerHTML=list.length===0?'<tr><td colspan="4" class="empty">No bookings yet</td></tr>':list.slice(0,5).map(b=>`<tr><td>${b.name||'—'}</td><td>${b.sessionType||b.type||'—'}</td><td>${fmtDate(b.date||b.createdAt)}</td><td>${statusBadge(b.status)}</td></tr>`).join('')}
-  }catch(e){}
-
-  try{
-    const r=await api('/api/admin/messages');if(r.ok){const list=await r.json();
-    document.getElementById('dashMessages').innerHTML=list.length===0?'<tr><td colspan="3" class="empty">No messages yet</td></tr>':list.slice(0,5).map(m=>`<tr><td style="${m.read?'':'font-weight:700;color:var(--white)'}">${m.name||'—'}</td><td>${m.subject||'—'}</td><td>${fmtDate(m.createdAt)}</td></tr>`).join('')}
-  }catch(e){}
+    const b64=await toB64(file);
+    const r=await api('/api/admin/upload',{method:'POST',body:JSON.stringify({filename:file.name,base64:b64,mimeType:file.type})});
+    const d=await r.json();
+    if(!r.ok){label.innerHTML='Change<input type="file" accept="image/*" onchange="uploadSecImg(this,\''+key+'\',\''+secId+'\')">';toast('Upload failed');return}
+    img.src=d.url;
+    sectionData[key]=d.url;
+    await api('/api/admin/content',{method:'PUT',body:JSON.stringify(sectionData)});
+    toast('Image updated!');
+    label.innerHTML='Change<input type="file" accept="image/*" onchange="uploadSecImg(this,\''+key+'\',\''+secId+'\')">';
+  }catch(e){label.innerHTML='Change<input type="file" accept="image/*" onchange="uploadSecImg(this,\''+key+'\',\''+secId+'\')">';toast('Error: '+e.message)}
 }
 
-// ═══ BOOKINGS ═══
-async function loadBookings(){
-  const r=await api('/api/admin/bookings');if(!r.ok)return;
-  const list=await r.json();
-  document.getElementById('bookingsList').innerHTML=list.length===0?'<tr><td colspan="7" class="empty">No bookings yet</td></tr>':list.map(b=>`<tr>
-    <td style="font-weight:600">${b.name||'—'}</td><td>${b.email||'—'}</td><td>${b.sessionType||b.type||'—'}</td>
-    <td>${b.date||fmtDate(b.createdAt)}</td><td>${b.time||'—'}</td><td>${statusBadge(b.status)}</td>
-    <td><div style="display:flex;gap:.3rem">
-      <button class="btn-icon" title="Confirm" onclick="updateBooking('${b.id}','confirmed')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
-      <button class="btn-icon" title="Complete" onclick="updateBooking('${b.id}','completed')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-      <button class="btn-icon" title="Cancel" onclick="updateBooking('${b.id}','cancelled')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div></td></tr>`).join('');
-}
-async function updateBooking(id,status){
-  const r=await api('/api/admin/bookings',{method:'PUT',body:JSON.stringify({id,status})});
-  if(r.ok){toast('Booking updated');loadBookings()}else toast('Failed to update','error');
-}
-
-// ═══ ORDERS ═══
-async function loadOrders(){
-  const r=await api('/api/admin/orders');if(!r.ok)return;
-  const list=await r.json();
-  document.getElementById('ordersList').innerHTML=list.length===0?'<tr><td colspan="6" class="empty">No orders yet</td></tr>':list.map(o=>`<tr>
-    <td style="font-weight:600">#${(o.id||'').slice(0,8)}</td><td>${o.customerName||o.email||'—'}</td>
-    <td>${(o.items||[]).length} items</td><td style="color:var(--red);font-weight:700">€${(o.total||0).toFixed(2)}</td>
-    <td>${statusBadge(o.status)}</td><td>${fmtDate(o.createdAt)}</td></tr>`).join('');
-}
-
-// ═══ SUBSCRIBERS ═══
-async function loadSubscribers(){
-  const r=await api('/api/admin/subscribers');if(!r.ok)return;
-  const list=await r.json();
-  document.getElementById('subsList').innerHTML=list.length===0?'<tr><td colspan="4" class="empty">No subscribers yet</td></tr>':list.map(s=>`<tr>
-    <td style="font-weight:600">${s.email}</td><td><span class="badge badge-gray">${s.source||'website'}</span></td>
-    <td>${fmtDate(s.createdAt)}</td>
-    <td><button class="btn-icon" title="Remove" onclick="removeSub('${s.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>`).join('');
-}
-async function removeSub(id){if(!confirm('Remove subscriber?'))return;await api('/api/admin/subscribers?id='+id,{method:'DELETE'});toast('Subscriber removed');loadSubscribers()}
-function exportSubscribers(){
-  const rows=document.querySelectorAll('#subsList tr');
-  let csv='Email,Source,Date\n';
-  rows.forEach(r=>{const cells=r.querySelectorAll('td');if(cells.length>=3)csv+=`${cells[0].textContent},${cells[1].textContent},${cells[2].textContent}\n`});
-  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='subscribers.csv';a.click();
-}
-
-// ═══ MESSAGES ═══
-async function loadMessages(){
-  const r=await api('/api/admin/messages');if(!r.ok)return;
-  const list=await r.json();
-  document.getElementById('msgList').innerHTML=list.length===0?'<tr><td colspan="6" class="empty">No messages yet</td></tr>':list.map(m=>`<tr style="${m.read?'':'background:rgba(196,30,42,.03)'}">
-    <td style="font-weight:${m.read?'400':'700'}">${m.name||'—'}</td><td>${m.email||'—'}</td>
-    <td>${m.subject||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.message||'—'}</td>
-    <td>${fmtDate(m.createdAt)}</td>
-    <td><div style="display:flex;gap:.3rem">
-      ${m.read?'':`<button class="btn-icon" title="Mark read" onclick="markRead('${m.id}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>`}
-      <button class="btn-icon" title="Delete" onclick="deleteMsg('${m.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-    </div></td></tr>`).join('');
-}
-async function markRead(id){await api('/api/admin/messages',{method:'PUT',body:JSON.stringify({id,read:true})});loadMessages()}
-async function deleteMsg(id){if(!confirm('Delete message?'))return;await api('/api/admin/messages?id='+id,{method:'DELETE'});toast('Message deleted');loadMessages()}
-
-// ═══ CONTENT ═══
-async function loadContent(){
-  const r=await api('/api/admin/content');if(!r.ok)return;
-  const c=await r.json();
-  document.getElementById('c_hero_title').value=c.hero_title||'';
-  document.getElementById('c_hero_sub').value=c.hero_sub||'';
-  document.getElementById('c_about').value=c.about||'';
-  document.getElementById('c_quote').value=c.quote||'';
-  document.getElementById('c_footer').value=c.footer||'';
-}
-document.getElementById('saveContent').addEventListener('click',async()=>{
-  const r=await api('/api/admin/content',{method:'PUT',body:JSON.stringify({hero_title:document.getElementById('c_hero_title').value,hero_sub:document.getElementById('c_hero_sub').value,about:document.getElementById('c_about').value,quote:document.getElementById('c_quote').value,footer:document.getElementById('c_footer').value})});
-  const st=document.getElementById('contentStatus');
-  if(r.ok){st.textContent='✓ Saved';st.style.color='var(--green)';toast('Content saved')}
-  else{st.textContent='Failed';st.style.color='var(--red-light)';toast('Save failed','error')}
-});
+function toB64(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result.split(',')[1]);fr.onerror=rej;fr.readAsDataURL(file)})}
 
 // ═══ MEDIA ═══
-function toBase64(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result.split(',')[1]);fr.onerror=rej;fr.readAsDataURL(file)})}
 const uz=document.getElementById('uploadZone'),fi=document.getElementById('fileInput');
 uz.addEventListener('click',()=>fi.click());
 uz.addEventListener('dragover',e=>{e.preventDefault();uz.style.borderColor='var(--red)'});
 uz.addEventListener('dragleave',()=>{uz.style.borderColor=''});
-uz.addEventListener('drop',async e=>{e.preventDefault();uz.style.borderColor='';const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))await doUpload(f)});
-fi.addEventListener('change',async()=>{if(fi.files[0])await doUpload(fi.files[0]);fi.value=''});
+uz.addEventListener('drop',async e=>{e.preventDefault();uz.style.borderColor='';for(const f of e.dataTransfer.files){if(f.type.startsWith('image/'))await doUpload(f)}});
+fi.addEventListener('change',async()=>{for(const f of fi.files){await doUpload(f)}fi.value=''});
 async function doUpload(file){
-  const st=document.getElementById('uploadStatus');st.textContent='Uploading...';st.style.color='var(--gray-light)';
-  try{const b64=await toBase64(file);const r=await api('/api/admin/upload',{method:'POST',body:JSON.stringify({filename:file.name,base64:b64,mimeType:file.type})});
-  const d=await r.json().catch(()=>({}));if(!r.ok){st.textContent=d.error||'Upload failed';st.style.color='var(--red-light)';return}
-  st.textContent='✓ Uploaded: '+d.filename;st.style.color='var(--green)';toast('Image uploaded');loadMedia()}
-  catch(e){st.textContent='Error: '+e.message;st.style.color='var(--red-light)'}
+  const st=document.getElementById('uploadStatus');st.textContent='Uploading '+file.name+'...';st.style.color='var(--gl)';
+  try{const b64=await toB64(file);const r=await api('/api/admin/upload',{method:'POST',body:JSON.stringify({filename:file.name,base64:b64,mimeType:file.type})});
+  const d=await r.json();if(!r.ok){st.textContent=d.error||'Failed';st.style.color='var(--rl)';return}
+  st.textContent='✓ '+d.filename;st.style.color='var(--green)';toast('Uploaded');loadMedia()}
+  catch(e){st.textContent='Error';st.style.color='var(--rl)'}
 }
 async function loadMedia(){
-  const r=await api('/api/admin/media');if(!r.ok)return;
-  const list=await r.json();
-  document.getElementById('mediaList').innerHTML=list.length===0?'<p style="color:var(--gray);font-size:.82rem">No uploads yet</p>':list.map(m=>`<div class="media-item"><img src="${m.url}" alt="" loading="lazy"><div class="info">${m.filename}</div><button class="del" data-id="${m.id}">Remove</button></div>`).join('');
-  document.querySelectorAll('.media-item .del').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('Remove?'))return;await api('/api/admin/media?id='+b.dataset.id,{method:'DELETE'});toast('Removed');loadMedia()}));
+  const r=await api('/api/admin/media');if(!r.ok)return;const l=await r.json();
+  document.getElementById('mediaList').innerHTML=l.length===0?'<p style="color:var(--g);font-size:.78rem">No uploads yet</p>':l.map(m=>`<div class="mi"><img src="${m.url}" alt="" loading="lazy"><div class="info">${m.filename}</div><button class="del" data-id="${m.id}">Remove</button></div>`).join('');
+  document.querySelectorAll('.mi .del').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('Remove?'))return;await api('/api/admin/media?id='+b.dataset.id,{method:'DELETE'});toast('Removed');loadMedia()}));
 }
 
+// ═══ BOOKINGS ═══
+async function loadBookings(){
+  const r=await api('/api/admin/bookings');if(!r.ok)return;const l=await r.json();
+  document.getElementById('bkList').innerHTML=l.length===0?'<tr><td colspan="8" class="empty">No bookings</td></tr>':l.map(b=>`<tr>
+    <td style="font-weight:600">${b.name||'—'}</td><td>${b.email||'—'}</td><td>${b.sessionType||'—'}</td>
+    <td>${b.date||fD(b.createdAt)}</td><td>${b.time||'—'}</td><td>€${(b.price||0).toFixed(0)}${b.demo?' <span class="badge b-yellow">demo</span>':''}</td><td>${sB(b.status)}</td>
+    <td><div style="display:flex;gap:.2rem">
+      <button class="btn-i" title="Confirm" onclick="updBk('${b.id}','confirmed')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+      <button class="btn-i" title="Complete" onclick="updBk('${b.id}','completed')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+      <button class="btn-i" title="Cancel" onclick="updBk('${b.id}','cancelled')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div></td></tr>`).join('');
+}
+async function updBk(id,s){const r=await api('/api/admin/bookings',{method:'PUT',body:JSON.stringify({id,status:s})});if(r.ok){toast('Updated');loadBookings()}else toast('Failed')}
+
+// ═══ ORDERS ═══
+async function loadOrders(){
+  const r=await api('/api/admin/orders');if(!r.ok)return;const l=await r.json();
+  document.getElementById('orList').innerHTML=l.length===0?'<tr><td colspan="6" class="empty">No orders</td></tr>':l.map(o=>`<tr>
+    <td style="font-weight:600">#${(o.id||'').slice(0,8)}${o.demo?' <span class="badge b-yellow">demo</span>':''}</td><td>${o.customerName||o.email||'—'}</td>
+    <td>${(o.items||[]).length} items</td><td style="color:var(--red);font-weight:700">€${(o.total||0).toFixed(2)}</td>
+    <td>${sB(o.status)}</td><td>${fD(o.createdAt)}</td></tr>`).join('');
+}
+
+// ═══ SUBSCRIBERS ═══
+async function loadSubs(){
+  const r=await api('/api/admin/subscribers');if(!r.ok)return;const l=await r.json();
+  document.getElementById('sbList').innerHTML=l.length===0?'<tr><td colspan="4" class="empty">No subscribers</td></tr>':l.map(s=>`<tr>
+    <td style="font-weight:600">${s.email}</td><td><span class="badge b-gray">${s.source||'website'}</span></td><td>${fD(s.createdAt)}</td>
+    <td><button class="btn-i" onclick="rmSub('${s.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>`).join('');
+}
+async function rmSub(id){if(!confirm('Remove?'))return;await api('/api/admin/subscribers?id='+id,{method:'DELETE'});toast('Removed');loadSubs()}
+function exportCSV(){
+  const rows=document.querySelectorAll('#sbList tr');let csv='Email,Source,Date\n';
+  rows.forEach(r=>{const c=r.querySelectorAll('td');if(c.length>=3)csv+=`${c[0].textContent},${c[1].textContent},${c[2].textContent}\n`});
+  const b=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='subscribers.csv';a.click();
+}
+
+// ═══ MESSAGES ═══
+async function loadMsgs(){
+  const r=await api('/api/admin/messages');if(!r.ok)return;const l=await r.json();
+  document.getElementById('mgList').innerHTML=l.length===0?'<tr><td colspan="6" class="empty">No messages</td></tr>':l.map(m=>`<tr style="${m.read?'':'background:rgba(196,30,42,.03)'}">
+    <td style="font-weight:${m.read?'400':'700'}">${m.name||'—'}</td><td>${m.email||'—'}</td><td>${m.subject||'—'}</td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.message||'—'}</td><td>${fD(m.createdAt)}</td>
+    <td><div style="display:flex;gap:.2rem">${m.read?'':`<button class="btn-i" title="Mark read" onclick="rdMsg('${m.id}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>`}<button class="btn-i" title="Delete" onclick="delMsg('${m.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></td></tr>`).join('');
+}
+async function rdMsg(id){await api('/api/admin/messages',{method:'PUT',body:JSON.stringify({id,read:true})});loadMsgs()}
+async function delMsg(id){if(!confirm('Delete?'))return;await api('/api/admin/messages?id='+id,{method:'DELETE'});toast('Deleted');loadMsgs()}
+
 // ═══ PRODUCTS ═══
-async function loadProducts(){const r=await api('/api/admin/products');if(!r.ok)return;document.getElementById('productsJson').value=JSON.stringify(await r.json(),null,2)}
-document.getElementById('saveProducts').addEventListener('click',async()=>{
-  let json;try{json=JSON.parse(document.getElementById('productsJson').value)}catch(e){toast('Invalid JSON','error');return}
-  const r=await api('/api/admin/products',{method:'PUT',body:JSON.stringify({products:json})});
-  if(r.ok){toast('Products saved')}else toast('Save failed','error');
+async function loadProd(){const r=await api('/api/admin/products');if(!r.ok)return;document.getElementById('prodJson').value=JSON.stringify(await r.json(),null,2)}
+document.getElementById('saveProd').addEventListener('click',async()=>{
+  let j;try{j=JSON.parse(document.getElementById('prodJson').value)}catch(e){toast('Invalid JSON');return}
+  const r=await api('/api/admin/products',{method:'PUT',body:JSON.stringify({products:j})});if(r.ok)toast('Products saved');else toast('Failed');
 });
 
 // ═══ SERVICES ═══
-async function loadServices(){const r=await api('/api/admin/services');if(!r.ok)return;document.getElementById('servicesJson').value=JSON.stringify(await r.json(),null,2)}
-document.getElementById('saveServices').addEventListener('click',async()=>{
-  let arr;try{arr=JSON.parse(document.getElementById('servicesJson').value)}catch(e){toast('Invalid JSON','error');return}
-  if(!Array.isArray(arr)){toast('Must be a JSON array','error');return}
-  const r=await api('/api/admin/services',{method:'PUT',body:JSON.stringify({services:arr})});
-  if(r.ok){toast('Services saved')}else toast('Save failed','error');
+async function loadSrv(){const r=await api('/api/admin/services');if(!r.ok)return;document.getElementById('srvJson').value=JSON.stringify(await r.json(),null,2)}
+document.getElementById('saveSrv').addEventListener('click',async()=>{
+  let a;try{a=JSON.parse(document.getElementById('srvJson').value)}catch(e){toast('Invalid JSON');return}
+  if(!Array.isArray(a)){toast('Must be array');return}
+  const r=await api('/api/admin/services',{method:'PUT',body:JSON.stringify({services:a})});if(r.ok)toast('Services saved');else toast('Failed');
 });
 
-// ═══ INIT ═══
 checkAuth();
 </script>
 </body>
