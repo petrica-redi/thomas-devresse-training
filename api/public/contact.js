@@ -1,4 +1,5 @@
 const { loadSiteData, saveSiteData } = require('../lib/store');
+const { notifyContact } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -11,7 +12,7 @@ module.exports = async function handler(req, res) {
   const data = await loadSiteData();
   if (!data.messages) data.messages = [];
 
-  data.messages.unshift({
+  const msg = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name,
     email,
@@ -20,8 +21,10 @@ module.exports = async function handler(req, res) {
     message,
     read: false,
     createdAt: new Date().toISOString(),
-  });
+  };
 
+  data.messages.unshift(msg);
   await saveSiteData(data);
+  notifyContact(msg).catch(() => {});
   res.json({ ok: true, message: 'Message sent successfully' });
 };

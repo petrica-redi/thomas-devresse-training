@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const { loadSiteData, saveSiteData } = require('../lib/store');
+const { notifyOrder } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +34,7 @@ module.exports = async function handler(req, res) {
       createdAt: new Date().toISOString(),
     });
     await saveSiteData(data);
+    notifyOrder(data.orders[0]).catch(() => {});
     const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
     return res.status(200).json({ url: `${origin}?checkout=success&demo=true`, id: demoId, demo: true });
   }

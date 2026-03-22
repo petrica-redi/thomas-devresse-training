@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const { loadSiteData, saveSiteData } = require('../lib/store');
+const { notifyBooking, notifyOrder } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -50,6 +51,7 @@ module.exports = async function handler(req, res) {
             createdAt: new Date().toISOString(),
           });
           await saveSiteData(data);
+          notifyBooking(data.bookings[0]).catch(() => {});
           console.log('[Stripe] Booking saved:', session.id, meta.sessionType, meta.date, meta.time);
         } else {
           if (!data.orders) data.orders = [];
@@ -91,6 +93,7 @@ module.exports = async function handler(req, res) {
             createdAt: new Date().toISOString(),
           });
           await saveSiteData(data);
+          notifyOrder(data.orders[0]).catch(() => {});
           console.log('[Stripe] Order saved:', session.id, items.length, 'items, €' + (session.amount_total || 0) / 100);
         }
         break;

@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const { loadSiteData, saveSiteData } = require('../lib/store');
+const { notifyBooking } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,6 +44,7 @@ module.exports = async function handler(req, res) {
       createdAt: new Date().toISOString(),
     });
     await saveSiteData(data);
+    notifyBooking(data.bookings[0]).catch(() => {});
     return res.status(200).json({ ok: true, free: true, id: bookingId });
   }
 
@@ -65,6 +67,7 @@ module.exports = async function handler(req, res) {
       createdAt: new Date().toISOString(),
     });
     await saveSiteData(data);
+    notifyBooking(data.bookings[0]).catch(() => {});
     const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://devresse.fit';
     return res.status(200).json({ url: `${origin}?booking=success&demo=true`, id: demoId, demo: true });
   }
