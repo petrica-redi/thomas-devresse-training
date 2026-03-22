@@ -13,6 +13,10 @@ function getDefaultData() {
     },
     services: [],
     media: [],
+    bookings: [],
+    subscribers: [],
+    messages: [],
+    orders: [],
   };
 }
 

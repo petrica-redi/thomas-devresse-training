@@ -1,6 +1,6 @@
 .vercel
 node_modules
-public
+/public
 .env
 .env.local
 .env*.local
