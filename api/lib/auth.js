@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { SignJWT, jwtVerify } = require('jose');
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tomas@devresse.fit';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'thomas@devresse.fit';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '$2a$10$vJJ8XoX3pO29yHIcXtTN5OXdhOdfojuarVJenHiPmSXopjRVyyXqy';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'td-admin-secret-change-in-production');
 const COOKIE_NAME = 'td_admin';
