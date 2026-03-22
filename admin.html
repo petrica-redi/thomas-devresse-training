@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Thomas Devresse</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#1a1a1a;color:#e5e5e5;min-height:100vh;line-height:1.5;}
+    .container{max-width:900px;margin:0 auto;padding:2rem;}
+    h1{font-size:1.5rem;margin-bottom:0.5rem;color:#fff;}
+    .sub{color:#888;font-size:0.9rem;margin-bottom:2rem;}
+    .card{background:#252525;border:1px solid #333;border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;}
+    .card h2{font-size:1.1rem;margin-bottom:1rem;color:#c41e2a;}
+    label{display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#888;margin-bottom:0.35rem;}
+    input[type=text],input[type=email],input[type=password],input[type=number],textarea{width:100%;padding:0.6rem 0.8rem;background:#111;border:1px solid #333;color:#fff;border-radius:4px;font-size:0.95rem;margin-bottom:1rem;}
+    input:focus,textarea:focus{outline:none;border-color:#c41e2a;}
+    textarea{min-height:80px;resize:vertical;}
+    .btn{display:inline-block;padding:0.6rem 1.2rem;background:#c41e2a;color:#fff;border:none;border-radius:4px;font-weight:600;font-size:0.85rem;cursor:pointer;transition:background .2s;}
+    .btn:hover{background:#e8323e;}
+    .btn-secondary{background:#333;color:#fff;}
+    .btn-secondary:hover{background:#444;}
+    .flex{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;}
+    .mb{margin-bottom:1rem;}
+    .tabs{display:flex;gap:0.25rem;margin-bottom:1.5rem;border-bottom:1px solid #333;}
+    .tab{padding:0.6rem 1rem;background:transparent;border:none;color:#888;cursor:pointer;font-size:0.9rem;border-bottom:2px solid transparent;margin-bottom:-1px;}
+    .tab:hover{color:#fff;}
+    .tab.active{color:#c41e2a;border-bottom-color:#c41e2a;}
+    .panel{display:none;}
+    .panel.active{display:block;}
+    .login-wrap{max-width:400px;margin:4rem auto;}
+    .login-wrap .card{padding:2rem;}
+    .error{color:#e8323e;font-size:0.85rem;margin-top:0.5rem;}
+    .success{color:#4ade80;font-size:0.85rem;margin-top:0.5rem;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:0.6rem;text-align:left;border-bottom:1px solid #333;}
+    th{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:#888;}
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;}
+    .media-item{background:#111;border-radius:6px;overflow:hidden;border:1px solid #333;}
+    .media-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+    .media-item .info{padding:0.5rem;font-size:0.75rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .media-item .del{width:100%;padding:0.35rem;background:#333;border:none;color:#888;cursor:pointer;font-size:0.7rem;}
+    .media-item .del:hover{background:#c41e2a;color:#fff;}
+    .upload-zone{border:2px dashed #444;border-radius:8px;padding:2rem;text-align:center;color:#666;margin-bottom:1rem;cursor:pointer;}
+    .upload-zone:hover{border-color:#c41e2a;color:#888;}
+    .upload-zone input{display:none;}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    @media(max-width:600px){.row{grid-template-columns:1fr;}}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+  </style>
+</head>
+<body>
+  <div id="loginPage" class="login-wrap">
+    <div class="card">
+      <h1>Admin login</h1>
+      <p class="sub">Thomas Devresse — Kaizen Training</p>
+      <form id="loginForm">
+        <label>Email</label>
+        <input type="email" id="loginEmail" value="petrica@redi-ngo.eu" required>
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <div id="loginError" class="error"></div>
+        <button type="submit" class="btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard" style="display:none;" class="container">
+    <div class="header">
+      <div>
+        <h1>Admin panel</h1>
+        <p class="sub">Manage content, media, products & services</p>
+      </div>
+      <div class="flex">
+        <a href="/" class="btn btn-secondary">View site</a>
+        <button type="button" class="btn btn-secondary" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="tab active" data-tab="content">Content (text)</button>
+      <button type="button" class="tab" data-tab="media">Media (pictures)</button>
+      <button type="button" class="tab" data-tab="products">Products (shop)</button>
+      <button type="button" class="tab" data-tab="services">Services (training)</button>
+    </div>
+
+    <div id="contentPanel" class="panel active">
+      <div class="card">
+        <h2>Site text</h2>
+        <p class="sub mb">Edit key texts used across the website. Save to apply.</p>
+        <div class="row">
+          <div><label>Hero title</label><input type="text" id="c_hero_title" placeholder="Small Steps. Big Transformations."></div>
+          <div><label>Hero subtitle</label><input type="text" id="c_hero_sub" placeholder="Rooted in the Japanese philosophy of Kaizen..."></div>
+        </div>
+        <div><label>About text</label><textarea id="c_about" placeholder="With over 5 years of professional experience..."></textarea></div>
+        <div><label>Philosophy quote</label><input type="text" id="c_quote" placeholder="Moving slowly takes you far..."></div>
+        <div><label>Footer tagline</label><input type="text" id="c_footer" placeholder="Small daily improvements will take you far."></div>
+        <button type="button" class="btn" id="saveContent">Save content</button>
+        <span id="contentStatus" class="success" style="display:none;">Saved.</span>
+      </div>
+    </div>
+
+    <div id="mediaPanel" class="panel">
+      <div class="card">
+        <h2>Upload pictures</h2>
+        <div class="upload-zone" id="uploadZone">Drop an image here or click to choose<input type="file" id="fileInput" accept="image/*"></div>
+        <div id="uploadStatus" class="success" style="display:none;"></div>
+        <h2 style="margin-top:1.5rem;">Uploaded media</h2>
+        <div id="mediaList" class="media-grid"></div>
+      </div>
+    </div>
+
+    <div id="productsPanel" class="panel">
+      <div class="card">
+        <h2>Shop products</h2>
+        <p class="sub mb">Products are stored as JSON. Edit the structure below and Save. Categories: nutrition (protein, supplements, etc.), gear, videos, gallery.</p>
+        <label>Products JSON (nutrition, gear, videos, gallery)</label>
+        <textarea id="productsJson" style="min-height:320px;font-family:monospace;font-size:0.8rem;"></textarea>
+        <button type="button" class="btn" id="saveProducts">Save products</button>
+        <span id="productsStatus" class="success" style="display:none;">Saved.</span>
+      </div>
+    </div>
+
+    <div id="servicesPanel" class="panel">
+      <div class="card">
+        <h2>Training / services</h2>
+        <p class="sub mb">Services (e.g. Individual Session, Standard Pack). Edit JSON and Save.</p>
+        <label>Services JSON</label>
+        <textarea id="servicesJson" style="min-height:200px;font-family:monospace;font-size:0.8rem;"></textarea>
+        <button type="button" class="btn" id="saveServices">Save services</button>
+        <span id="servicesStatus" class="success" style="display:none;">Saved.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    function api(path, opts = {}) {
+      const url = (API || '') + path;
+      return fetch(url, { ...opts, credentials: 'include', headers: { ...opts.headers, 'Content-Type': 'application/json' } });
+    }
+
+    async function checkAuth() {
+      const r = await api('/api/auth/me');
+      if (r.ok) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadContent(); loadMedia(); loadProducts(); loadServices();
+        return true;
+      }
+      return false;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('loginError');
+      err.textContent = '';
+      const r = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value }) });
+      const data = r.ok ? {} : await r.json().catch(() => ({}));
+      if (!r.ok) { err.textContent = data.error || 'Login failed'; return; }
+      await checkAuth();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await api('/api/auth/logout', { method: 'POST' });
+      document.getElementById('loginPage').style.display = 'block';
+      document.getElementById('dashboard').style.display = 'none';
+    });
+
+    document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById(t.dataset.tab + 'Panel').classList.add('active');
+    }));
+
+    async function loadContent() {
+      const r = await api('/api/admin/content');
+      if (!r.ok) return;
+      const c = await r.json();
+      document.getElementById('c_hero_title').value = c.hero_title || '';
+      document.getElementById('c_hero_sub').value = c.hero_sub || '';
+      document.getElementById('c_about').value = c.about || '';
+      document.getElementById('c_quote').value = c.quote || '';
+      document.getElementById('c_footer').value = c.footer || '';
+    }
+    document.getElementById('saveContent').addEventListener('click', async () => {
+      const r = await api('/api/admin/content', {
+        method: 'PUT',
+        body: JSON.stringify({
+          hero_title: document.getElementById('c_hero_title').value,
+          hero_sub: document.getElementById('c_hero_sub').value,
+          about: document.getElementById('c_about').value,
+          quote: document.getElementById('c_quote').value,
+          footer: document.getElementById('c_footer').value,
+        }),
+      });
+      const st = document.getElementById('contentStatus');
+      st.style.display = r.ok ? 'inline' : 'none';
+      st.className = r.ok ? 'success' : 'error';
+      st.textContent = r.ok ? 'Saved.' : (await r.json().catch(() => ({}))).error || 'Failed';
+    });
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result.split(',')[1]);
+        fr.onerror = reject;
+        fr.readAsDataURL(file);
+      });
+    }
+    const uz = document.getElementById('uploadZone');
+    const fi = document.getElementById('fileInput');
+    uz.addEventListener('click', () => fi.click());
+    uz.addEventListener('dragover', (e) => { e.preventDefault(); uz.style.borderColor = '#c41e2a'; });
+    uz.addEventListener('dragleave', () => { uz.style.borderColor = ''; });
+    uz.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      uz.style.borderColor = '';
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      await doUpload(file);
+    });
+    fi.addEventListener('change', async () => {
+      const file = fi.files[0];
+      if (!file) return;
+      await doUpload(file);
+      fi.value = '';
+    });
+    async function doUpload(file) {
+      const status = document.getElementById('uploadStatus');
+      status.style.display = 'block';
+      status.textContent = 'Uploading...';
+      status.className = '';
+      try {
+        const base64 = await toBase64(file);
+        const r = await api('/api/admin/upload', { method: 'POST', body: JSON.stringify({ filename: file.name, base64, mimeType: file.type }) });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) { status.className = 'error'; status.textContent = data.error || 'Upload failed'; return; }
+        status.className = 'success';
+        status.textContent = 'Uploaded: ' + data.filename;
+        loadMedia();
+      } catch (e) {
+        status.className = 'error';
+        status.textContent = 'Error: ' + e.message;
+      }
+    }
+    async function loadMedia() {
+      const r = await api('/api/admin/media');
+      if (!r.ok) return;
+      const list = await r.json();
+      const el = document.getElementById('mediaList');
+      el.innerHTML = list.length === 0 ? '<p class="sub">No uploads yet. Use the zone above.</p>' : list.map((m) => `<div class="media-item"><img src="${m.url}" alt=""><div class="info">${m.filename}</div><button type="button" class="del" data-id="${m.id}">Remove</button></div>`).join('');
+      el.querySelectorAll('.del').forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm('Remove this image from the list?')) return;
+        await api('/api/admin/media?id=' + b.dataset.id, { method: 'DELETE' });
+        loadMedia();
+      }));
+    }
+
+    async function loadProducts() {
+      const r = await api('/api/admin/products');
+      if (!r.ok) return;
+      const data = await r.json();
+      document.getElementById('productsJson').value = JSON.stringify(data, null, 2);
+    }
+    document.getElementById('saveProducts').addEventListener('click', async () => {
+      let json;
+      try { json = JSON.parse(document.getElementById('productsJson').value); } catch (e) { document.getElementById('productsStatus').textContent = 'Invalid JSON'; document.getElementById('productsStatus').className = 'error'; document.getElementById('productsStatus').style.display = 'inline'; return; }
+      const r = await api('/api/admin/products', { method: 'PUT', body: JSON.stringify({ products: json }) });
+      const st = document.getElementById('productsStatus');
+      st.style.display = 'inline';
+      st.className = r.ok ? 'success' : 'error';
+      st.textContent = r.ok ? 'Saved.' : (await r.json().catch(() => ({}))).error || 'Failed';
+    });
+
+    async function loadServices() {
+      const r = await api('/api/admin/services');
+      if (!r.ok) return;
+      const data = await r.json();
+      document.getElementById('servicesJson').value = JSON.stringify(data, null, 2);
+    }
+    document.getElementById('saveServices').addEventListener('click', async () => {
+      let arr;
+      try { arr = JSON.parse(document.getElementById('servicesJson').value); } catch (e) { document.getElementById('servicesStatus').textContent = 'Invalid JSON'; document.getElementById('servicesStatus').className = 'error'; document.getElementById('servicesStatus').style.display = 'inline'; return; }
+      if (!Array.isArray(arr)) { document.getElementById('servicesStatus').textContent = 'Must be a JSON array'; document.getElementById('servicesStatus').className = 'error'; document.getElementById('servicesStatus').style.display = 'inline'; return; }
+      const r = await api('/api/admin/services', { method: 'PUT', body: JSON.stringify({ services: arr }) });
+      const st = document.getElementById('servicesStatus');
+      st.style.display = 'inline';
+      st.className = r.ok ? 'success' : 'error';
+      st.textContent = r.ok ? 'Saved.' : (await r.json().catch(() => ({}))).error || 'Failed';
+    });
+
+    checkAuth();
+  </script>
+</body>
+</html>

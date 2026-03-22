@@ -1,0 +1,15 @@
+{
+  "name": "thomas-devresse-training",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "node scripts/build-static.js"
+  },
+  "dependencies": {
+    "@vercel/blob": "^0.24.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.2.0",
+    "stripe": "^20.4.1"
+  }
+}
